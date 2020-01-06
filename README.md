@@ -6,7 +6,7 @@ Project still work in progress
 
 ------------------------------
 
-Project intent to make self-driving script / ai for F1 2018 game using Python
+Project intent to make self-driving script / ai for F1 2017 game using Python
 
 ------------------------------
 
