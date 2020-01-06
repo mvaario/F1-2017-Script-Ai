@@ -6,8 +6,6 @@
 # Saving inputs (best line position) and outputs (wheel position and gas), input_data.npy, output_x.npy and output_y.npy
 # Added script to drive without Ai training (self.ai = 0)
 # made by mvaario
-# ASDASD
-
 
 import cv2
 import numpy as np
