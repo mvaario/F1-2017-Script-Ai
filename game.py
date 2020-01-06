@@ -17,7 +17,6 @@ import pygame
 from tensorflow import keras
 
 
-
 class settings:
     def __init__(self):
 
