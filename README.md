@@ -39,5 +39,5 @@ Changing output lens from [3] to [7]
 Training model with balanced data, inputs / outputs
 
 ------------------------------
-Added game.py loading trained training model
+Added Game.py loading trained training model
 
