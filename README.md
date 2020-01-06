@@ -32,6 +32,12 @@ Loading recorded data from game.py
 
 Balancing recorded data to same length and shuffling data
 
-Changing output values from [3] to [7]
+Changing input and output data dimensions
+
+Changing output lens from [3] to [7]
 
 Training model with balanced data, inputs / outputs
+
+------------------------------
+Added game.py loading trained training model
+
