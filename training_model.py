@@ -48,7 +48,6 @@ class balance:
         # Changin shape
         input_y = state.input_shape(input_y)
 
-
         # Output change
         output_y = state.output_change(output_y)
 
@@ -186,7 +185,7 @@ class balance:
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
         print("X axis Fitting")
-        model.fit(input_x, output_x, epochs=50)
+        model.fit(input_x, output_x, epochs=150)
         model.summary()
 
         model.save("x_axis.h5")
@@ -204,7 +203,7 @@ class balance:
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
         print("Y axis Fitting")
-        model.fit(input_y, output_y, epochs=50)
+        model.fit(input_y, output_y, epochs=150)
         model.summary()
 
         model.save("y_axis.h5")
@@ -226,6 +225,7 @@ if __name__ == '__main__':
     # output_x = np.array([[1,0,0], [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0]])
     # output_y = np.array([[1,0,0], [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0]])
 
+
     input_x = input
     input_y = input
 
@@ -238,16 +238,10 @@ if __name__ == '__main__':
     # output_data_x.append([left, straight, right])
     # output_data_y.append([gas, zero, brake])
 
-    print(output_y)
-    print("-----------")
-    print(output_x)
-    # Model X-axis
-    model = state.model_x(input_x, output_x)
+    state.model_x(input_x, output_x)
 
     # model Y-axis
     state.model_y(input_y, output_y)
-
-
 
     # prediction = model.predict(input_x)
 

@@ -5,7 +5,7 @@ class balance:
 
     def __init__(self):
 
-        self.i = 1
+        self.i = 20
 
     # Changing input shape
     def input_shape(self, input):
@@ -44,20 +44,28 @@ class balance:
 
         i = state.i
         for k in range(i):
+            pre = prediction[k]
 
-            print("inputs ", input[k:k + 1, 0:1])
-            print("Prediction values ", prediction[k])
-            k = int(np.argmax(prediction[k]))
-            print("Prediction ", k)
+            l = int(np.argmax(pre))
 
-            if k == 3:
-                k = "straight"
-            elif k > 3:
-                k = "Gas"
-            else:
-                k = "Brake"
-            print("Moves ", k)
+            print(input[k])
+            print(l)
             print("---------")
+
+
+            gas = np.sum(pre[:3])
+            zero = np.sum(pre[3:4])
+            brake = np.sum(pre[4:])
+
+            # print(gas)
+            print(brake)
+            all = (brake - gas) * 100
+            print((all))
+            print("---------")
+
+
+
+
         return
 
 
@@ -68,10 +76,10 @@ if __name__ == '__main__':
     # Loading model and inputs
     model_x = keras.models.load_model("x_axis.h5")
     model_y = keras.models.load_model("y_axis.h5")
-    input = np.load('input_data.npy', allow_pickle=True)
+    # input = np.load('input_data.npy', allow_pickle=True)
 
     # Test inputs
-    # input = np.array([[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0]])
+    input = np.array([[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0]])
 
     # Input shape change
     input = state.input_shape(input)
@@ -82,12 +90,11 @@ if __name__ == '__main__':
     # input_data.append([x, slope, brake, old_brake, v])
 
     # Testing
-    state.testing_x(input, prediction)
+    # state.testing_x(input, prediction)
 
     # y axis
     model = model_y
     prediction = model.predict(input)
-    # output_data_y.append([gas, zero, brake])
 
     # Testing
     state.testing_y(input, prediction)

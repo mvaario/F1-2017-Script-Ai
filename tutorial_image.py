@@ -1,4 +1,6 @@
-# youtube tutoral to train model
+# youtube tutorial to train model
+# video done by Tech With Tim
+# https://www.youtube.com/watch?v=k-_pWoy2fb4
 
 
 import tensorflow as tf

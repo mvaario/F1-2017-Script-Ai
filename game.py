@@ -407,15 +407,15 @@ class settings:
         output_data_y.append([gas, zero, brake])
 
 
+        # Saving data
         if len(input_data) % 250 == 0:
             print("Frames", len(input_data))
             # np.save("input_data", input_data)
-            # print(output_data_x)
             # np.save("output_x", output_data_x)
             # np.save("output_y", output_data_y)
 
         return
-    # Recording x-axis (Turing keys)
+    # Getting X-axis info (Turing keys)
     def x_position():
 
         # Prints the values for axis0-4
@@ -438,10 +438,10 @@ class settings:
             straight = [1]
 
         return left, straight, right
-    # Recording y-axis (Gas / braking keys)
+    # Getting Y-axis info (Gas / braking axis)
     def y_position():
 
-        # Prints the values for axis0-4
+        # Values for axis0-4
 
         gas = [0]
         zero = [0]
@@ -476,28 +476,21 @@ class settings:
 
 
         # Input shape change
-        input = settings.input_change()
+        input = settings.input_shape()
 
-        model = model_x
-        prediction = model.predict(input)
+        # Prediction x-axis
+        x = settings.model_turn(model_x, input)
 
-        k = int(np.argmax(prediction))
-
-        if k == 3:
-            k = "straight", k
-        elif k > 3:
-            k = "Right", k
-        else:
-            k = "left", k
-        print("Moves ", k)
-        print("---------")
+        # Prediction y-axis
+        y = settings.model_gas(model_y, input)
 
 
+        settings.controller(x,y)
 
         return
 
 
-    def input_change():
+    def input_shape():
         x = game.avg
         slope = game.slope
         v = game.speed
@@ -517,9 +510,52 @@ class settings:
         return input
 
 
+    def model_turn(model_x, input):
+
+        model = model_x
+        prediction = model.predict(input)
+
+        left = np.sum(prediction[0:, :3])
+        right = np.sum(prediction[0:, 4:])
+
+        x_axis = right - left
+
+        return x_axis
+
+    def model_gas(model_y, input):
+
+        model = model_y
+        prediction = model.predict(input)
+
+        gas = np.sum(prediction[0:, :3])
+        brake = np.sum(prediction[0:, 4:])
+
+        y_axis = brake - gas
+
+        return y_axis
 
 
 
+    def controller(x, y):
+
+        # -1 to 1
+        # 16400
+
+
+        x = 16400 + (16400 * x)
+        x = int(x)
+        x = 16400
+        vjoy.data.wAxisX = 0x0 + x
+
+        y = y * -1
+        # print(round(y,2))
+        y = 16400 + (16400 * y)
+        y = int(y)
+        vjoy.data.wAxisY = 0x0 + y
+
+
+        vjoy.update()
+        return
 
 
 
@@ -549,28 +585,29 @@ if __name__ == '__main__':
     check_key = key_check()
     vjoy = pyvjoy.VJoyDevice(1)
 
-    # Loading models
-    model_x = keras.models.load_model("x_axis.h5")
-    model_y = keras.models.load_model("y_axis.h5")
-
     # Printing recording device
-    if game.ai == 1 and game.ai_record == 1:
-        # Joystick settings.....
-        pygame.display.init()
-        pygame.joystick.init()
-        pygame.joystick.Joystick(0).init()
+    if game.ai == 1:
+        # Joystick info
+        if game.ai_record == 1:
+            pygame.display.init()
+            pygame.joystick.init()
+            pygame.joystick.Joystick(0).init()
 
-        # Prints the joystick's name
-        JoyName = pygame.joystick.Joystick(0).get_name()
-        print("Name of the joystick:")
-        print(JoyName)
+            # Prints the joystick's name
+            JoyName = pygame.joystick.Joystick(0).get_name()
+            print("Name of the joystick:")
+            print(JoyName)
 
-        # input data all
-        input_data = []
-        # turn
-        output_data_x = []
-        # gas / brake
-        output_data_y = []
+            # input data all
+            input_data = []
+            # turn
+            output_data_x = []
+            # gas / brake
+            output_data_y = []
+        # Loading models
+        else:
+            model_x = keras.models.load_model("x_axis.h5")
+            model_y = keras.models.load_model("y_axis.h5")
 
     print("F to start")
     F = 0
@@ -585,12 +622,6 @@ if __name__ == '__main__':
                 video = settings.start()
                 video = cv2.resize(video, (851, 371))
                 video_copy = np.copy(video)
-
-
-                # print(video.shape)
-
-
-
 
                 # SPEED CHECK > 100!
                 masked_white = settings.region_of_interest_speed(video_copy, video)
