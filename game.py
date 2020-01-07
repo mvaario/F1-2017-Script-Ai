@@ -22,7 +22,7 @@ class settings:
 
         # ai = 0 -> script, 1 -> tensorflow
         self.ai = 1
-        self.ai_record = 0
+        self.ai_record = 1
         self.aggression = 50
 
         # Setupsf
@@ -47,12 +47,6 @@ class settings:
         self.old_braking_force = 0
         self.old_y = 0
 
-        # Tensorflow
-        self.tf_x = 0
-        self.tf_y = 0
-
-        # test
-        self.input = []
 
         return
 
@@ -69,7 +63,7 @@ class settings:
     #   SPEED
     # Finding speed meter position
     def region_of_interest_speed(video_copy, video):
-        if game.ai != 1 and game.ai_record != 1:
+        if game.ai != 1 or game.ai_record != 1:
             polygons = np.array([[(750, 350), (780, 350), (780, 320), (750, 320)]])
         else:
             polygons = np.array([[(780, 350), (810, 350), (810, 320), (780, 320)]])
@@ -240,12 +234,17 @@ class settings:
         v = game.speed
         y = game.y + 30
         y2 = int(y/2) - (10 * v)
+        # print(y2)
+        # print(y)
+        # print(v)
+        # print("------")
 
         if y < 10:
             y = 10
         if y > 50:
             y = 50
         x = int(game.x / 2)
+
 
         polygons = np.array([[(410+x, y), (440+x, y), (450+x, y2), (400+x, y2)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
@@ -293,7 +292,6 @@ class settings:
             braking = 0
         if old_brake < 0:
             old_brake = 0
-
 
         game.braking_force = braking
         game.old_braking_force = old_brake
@@ -470,10 +468,8 @@ class settings:
         return gas, zero, brake
 
 
-
+    # Driving with trained model
     def model_drive(model_x, model_y):
-
-
 
         # Input shape change
         input = settings.input_shape()
@@ -484,12 +480,10 @@ class settings:
         # Prediction y-axis
         y = settings.model_gas(model_y, input)
 
-
-        settings.controller(x,y)
+        settings.controller(x, y)
 
         return
-
-
+    # Changing input data
     def input_shape():
         x = game.avg
         slope = game.slope
@@ -508,8 +502,7 @@ class settings:
         input = np.asarray(x)
 
         return input
-
-
+    # Getting turning prosent
     def model_turn(model_x, input):
 
         model = model_x
@@ -521,7 +514,7 @@ class settings:
         x_axis = right - left
 
         return x_axis
-
+    # Getting gas prosent
     def model_gas(model_y, input):
 
         model = model_y
@@ -533,26 +526,19 @@ class settings:
         y_axis = brake - gas
 
         return y_axis
-
-
-
+    # Updating controller
     def controller(x, y):
 
-        # -1 to 1
-        # 16400
-
-
+        # turn
         x = 16400 + (16400 * x)
         x = int(x)
-        x = 16400
         vjoy.data.wAxisX = 0x0 + x
 
+        # gas
         y = y * -1
-        # print(round(y,2))
         y = 16400 + (16400 * y)
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
-
 
         vjoy.update()
         return
@@ -587,15 +573,17 @@ if __name__ == '__main__':
 
     # Printing recording device
     if game.ai == 1:
+        print("AI = 1")
         # Joystick info
         if game.ai_record == 1:
+            print("Recording inputs")
             pygame.display.init()
             pygame.joystick.init()
             pygame.joystick.Joystick(0).init()
 
             # Prints the joystick's name
             JoyName = pygame.joystick.Joystick(0).get_name()
-            print("Name of the joystick:")
+            print("Name of the recording device:")
             print(JoyName)
 
             # input data all
@@ -604,10 +592,11 @@ if __name__ == '__main__':
             output_data_x = []
             # gas / brake
             output_data_y = []
-        # Loading models
         else:
+            # Loading models
             model_x = keras.models.load_model("x_axis.h5")
             model_y = keras.models.load_model("y_axis.h5")
+            print("Loading models")
 
     print("F to start")
     F = 0
@@ -639,7 +628,7 @@ if __name__ == '__main__':
                 red_pixels = settings.red_pixels(region)
                 video, lines = settings.braking_line(red_pixels, video)
 
-                # Script and Tensorflow
+                # Script and Tensorflow 0 -> script drive
                 if game.ai == 0:
                     settings.keys()
                 elif game.ai == 1:
