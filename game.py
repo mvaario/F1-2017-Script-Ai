@@ -22,10 +22,10 @@ class settings:
 
         # ai = 0 -> script, 1 -> tensorflow
         self.ai = 1
-        self.ai_record = 1
+        self.ai_record = 0
         self.aggression = 50
 
-        # Setupsf
+        # Setup
         self.display = 1
         self.fps = 0
 
@@ -233,11 +233,7 @@ class settings:
     def region_of_interest_brake(video_copy, video):
         v = game.speed
         y = game.y + 30
-        y2 = int(y/2) - (10 * v)
-        # print(y2)
-        # print(y)
-        # print(v)
-        # print("------")
+        y2 = int(y/3) - (10 * v)
 
         if y < 10:
             y = 10
@@ -405,13 +401,13 @@ class settings:
         output_data_y.append([gas, zero, brake])
 
 
+
         # Saving data
         if len(input_data) % 250 == 0:
             print("Frames", len(input_data))
             # np.save("input_data", input_data)
             # np.save("output_x", output_data_x)
             # np.save("output_y", output_data_y)
-
         return
     # Getting X-axis info (Turing keys)
     def x_position():
@@ -423,13 +419,13 @@ class settings:
         straight = [0]
         right = [0]
 
-        if axis < -0.005:
-            if axis < -0.9995:
+        if axis < -0.006:
+            if axis < -0.99:
                 axis = -1
             left = [abs(axis)]
 
-        elif axis > 0.005:
-            if axis > 0.9995:
+        elif axis > 0.006:
+            if axis > 0.99:
                 axis = 1
             right = [axis]
         else:
@@ -447,7 +443,7 @@ class settings:
 
         # Gas 1 to -1
         gas = float(pygame.joystick.Joystick(0).get_axis(2))
-        gas = (gas * -1 + 1) / 2
+        gas = (gas - 1) / -2
         if gas > 0.999:
             gas = 1
         if gas < 0.005:
@@ -455,7 +451,7 @@ class settings:
 
         # Braking
         brake = float(pygame.joystick.Joystick(0).get_axis(3))
-        brake = 1 - brake
+        brake = (1 - brake) / 2
         if brake > 0.999:
             brake = 1
         if brake < 0.005:
@@ -463,7 +459,6 @@ class settings:
 
         if gas == 0 and brake == 0:
             zero = 1
-
 
         return gas, zero, brake
 
@@ -513,6 +508,8 @@ class settings:
 
         x_axis = right - left
 
+        # x_axis = 1
+
         return x_axis
     # Getting gas prosent
     def model_gas(model_y, input):
@@ -523,7 +520,18 @@ class settings:
         gas = np.sum(prediction[0:, :3])
         brake = np.sum(prediction[0:, 4:])
 
+
+
+        if game.braking_force == 0 and game.old_braking_force == 0:
+            brake = 0
+        else:
+            gas = 0
+
         y_axis = brake - gas
+        # print(gas)
+        # print(brake)
+        # print("-------")
+        # print(y_axis)
 
         return y_axis
     # Updating controller
@@ -535,15 +543,12 @@ class settings:
         vjoy.data.wAxisX = 0x0 + x
 
         # gas
-        y = y * -1
         y = 16400 + (16400 * y)
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
 
         vjoy.update()
         return
-
-
 
     #   SETUPS
     # Displaying video and FPS
@@ -552,7 +557,7 @@ class settings:
         # Displaying video
         if game.display == 1:
             cv2.imshow(winname, video)
-            if game.ai == 1 and game.ai_record == 1:
+            if game.ai == 1 and game.ai_record == 0:
                 cv2.moveWindow(winname, -880, 40)
             else:
                 cv2.moveWindow(winname, 1000, 40)

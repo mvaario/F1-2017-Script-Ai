@@ -185,7 +185,7 @@ class balance:
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
         print("X axis Fitting")
-        model.fit(input_x, output_x, epochs=150)
+        model.fit(input_x, output_x, epochs=500)
         model.summary()
 
         model.save("x_axis.h5")
@@ -203,7 +203,7 @@ class balance:
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
         print("Y axis Fitting")
-        model.fit(input_y, output_y, epochs=150)
+        model.fit(input_y, output_y, epochs=500)
         model.summary()
 
         model.save("y_axis.h5")
