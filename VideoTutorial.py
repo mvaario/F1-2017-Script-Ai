@@ -1,3 +1,4 @@
+# Video tutorial how script works
 # Game F1 2017, intent to make self-driving script / ai
 # Taking ss from game window and finding the best line
 # Recording Controller / Wheel positions
@@ -22,8 +23,8 @@ class settings:
 
         # ai = 0 -> script, 1 -> tensorflow
         self.ai = 1
-        self.ai_record = 0
-        self.aggression = 50
+        self.ai_record = 1
+        self.aggression = 100
 
         # Setup
         self.display = 1
@@ -52,11 +53,7 @@ class settings:
 
     # Taking screenshot from game window(tested with double screen setup, game resolution 1282x766), (region=(-1700, 400, -850, 770))
     def start():
-            if game.ai == 1 and game.ai_record == 1:
-                video =  grab_screen(region=(370, 454, 1550, 975))
-            else:
-                video = grab_screen(region=(-1700, 400, -850, 770))
-
+            video = grab_screen(region=(-1700, 400, -850, 770))
             video = cv2.cvtColor(video, cv2.COLOR_BGR2RGB)
             return video
 
@@ -82,7 +79,7 @@ class settings:
         white_pixels = cv2.inRange(hsv, low_white, up_white)
         # cv2.imshow("test", white_pixels)
         return white_pixels
-    # Chekking if speed is >100, saving self.speed
+        # Chekking if speed is >100, saving self.speed
     def speed_check(white_pixels, video):
 
         blur = cv2.GaussianBlur(white_pixels, (5, 5), 0)
@@ -107,7 +104,6 @@ class settings:
 
         return video
 
-
     #   TURN
     # Finding best line position
     def region_of_interest_turn(video_copy, video):
@@ -120,12 +116,12 @@ class settings:
         else:
             x_ala = int(x_ylä / 2)
 
-        y = abs(int(x_ylä/1.5))
+        y = abs(int(x_ylä / 1.5))
         if y > 50:
             y = 50
 
         # polygons = np.array([[(762, 680), (800, 680), (800, 650), (762, 650)]])
-        polygons = np.array([[(300+x_ala, 170), (550+x_ala, 170), (450+x_ylä, y), (400+x_ylä, y)]])
+        polygons = np.array([[(300 + x_ala, 170), (550 + x_ala, 170), (450 + x_ylä, y), (400 + x_ylä, y)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
         mask = np.zeros_like(video_copy)
@@ -159,81 +155,79 @@ class settings:
         return video, lines
     # Calculating avg line, saving avg X/Y positions(self.x1/x2/y1/y2) and slopes
     def average_line(lines):
-        old_avg = game.avg + 425
-        old_avg_y = game.avg_y + 185
+            old_avg = game.avg + 425
+            old_avg_y = game.avg_y + 185
 
-        x1_avg = 0
-        x2_avg = 0
-        y1_avg = 0
-        y2_avg = 0
-        i = 0
+            x1_avg = 0
+            x2_avg = 0
+            y1_avg = 0
+            y2_avg = 0
+            i = 0
 
-        if lines is not None:
-            for line in lines:
-                x1 = np.array(line)[0, 0]
-                x2 = np.array(line)[0, 2]
-                y1 = np.array(line)[0, 1]
-                y2 = np.array(line)[0, 3]
+            if lines is not None:
+                for line in lines:
+                    x1 = np.array(line)[0, 0]
+                    x2 = np.array(line)[0, 2]
+                    y1 = np.array(line)[0, 1]
+                    y2 = np.array(line)[0, 3]
 
-                x1_avg = np.add(x1_avg, x1)
-                x2_avg = np.add(x2_avg, x2)
+                    x1_avg = np.add(x1_avg, x1)
+                    x2_avg = np.add(x2_avg, x2)
 
-                y1_avg = np.add(y1_avg, y1)
-                y2_avg = np.add(y2_avg, y2)
-                i = i + 1
+                    y1_avg = np.add(y1_avg, y1)
+                    y2_avg = np.add(y2_avg, y2)
+                    i = i + 1
 
+                # AVG
+                x1_avg = x1_avg / i
+                x2_avg = x2_avg / i
 
-            # AVG
-            x1_avg = x1_avg / i
-            x2_avg = x2_avg / i
+                y1_avg = y1_avg / i
+                y2_avg = y2_avg / i
 
-            y1_avg = y1_avg / i
-            y2_avg = y2_avg / i
+                avg = (x1_avg + x2_avg) / 2
+                avg_y = (y1_avg + y2_avg) / 2
 
-            avg = (x1_avg + x2_avg) / 2
-            avg_y = (y1_avg + y2_avg) / 2
+            else:
+                avg = old_avg
+                avg_y = old_avg_y
+                if avg > 470:
+                    avg = avg - 1
+                elif avg < 380:
+                    avg = avg + 1
 
-        else:
-            avg = old_avg
-            avg_y = old_avg_y
-            if avg > 470:
-                avg = avg - 1
-            elif avg < 380:
-                avg = avg + 1
+            x = int(avg)
+            y = int(avg_y / 1.58)
+            cv2.line(video, (x - 10, 200 - y), (x + 10, 200 - y), (0, 255, 0), 5)
 
-        x = int(avg)
-        y = int(avg_y / 1.58)
-        cv2.line(video, (x - 10, 200-y), (x + 10, 200-y), (0, 255, 0), 5)
+            avg = avg - 425
+            avg_y = avg_y - 185
+            if avg > 200:
+                avg = 200
+            if avg < -200:
+                avg = -200
 
-        avg = avg - 425
-        avg_y = avg_y - 185
-        if avg > 200:
-            avg = 200
-        if avg < -200:
-            avg = -200
+            game.avg = avg
+            game.avg_y = avg_y
 
-        game.avg = avg
-        game.avg_y = avg_y
+            # SLOPE
+            x = abs(game.avg)
+            y = abs(game.avg_y)
+            slope = game.slope
+            if y != 0 and x != 0:
+                slope = y / x
+                if slope > 50 or slope == 0:
+                    slope = 50
+            game.slope = slope
 
-        # SLOPE
-        x = abs(game.avg)
-        y = abs(game.avg_y)
-        slope = game.slope
-        if y != 0 and x != 0:
-            slope = y / x
-            if slope > 50 or slope == 0:
-                slope = 50
-        game.slope = slope
-
-        return
-
+            return
 
     #   BRAKE
     # Finding braking line position
     def region_of_interest_brake(video_copy, video):
         v = game.speed
         y = game.y + 30
-        y2 = int(y/3) - (10 * v)
+        y2 = int(y / 3) - (10 * v)
 
         if y < 10:
             y = 10
@@ -241,8 +235,7 @@ class settings:
             y = 50
         x = int(game.x / 2)
 
-
-        polygons = np.array([[(410+x, y), (440+x, y), (450+x, y2), (400+x, y2)]])
+        polygons = np.array([[(410 + x, y), (440 + x, y), (450 + x, y2), (400 + x, y2)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
         mask = np.zeros_like(video_copy)
@@ -253,7 +246,7 @@ class settings:
         # cv2.imshow(winname, masked_red)
 
         return masked_red
-    # Finding red pixels
+        # Finding red pixels
     def red_pixels(video):
 
         hsv = cv2.cvtColor(video, cv2.COLOR_RGB2HSV)
@@ -263,7 +256,7 @@ class settings:
         red_pixels = cv2.inRange(hsv, low_red, up_red)
         # cv2.imshow("test", reds)
         return red_pixels
-    # Displaying braking lines. Saving amount braking lines found, self.braking_force
+        # Displaying braking lines. Saving amount braking lines found, self.braking_force
     def braking_line(red_pixels, video):
         braking = game.braking_force
         old_brake = game.old_braking_force
@@ -280,7 +273,7 @@ class settings:
             braking = i
         else:
             braking = 0
-            old_brake = old_brake - 5
+            old_brake = old_brake - 1
 
         if braking != 0:
             old_brake = braking
@@ -294,7 +287,6 @@ class settings:
 
         return video, lines
 
-
     #   SCRIPT KEYS
     # Script drive(if self.ai == 0)
     def keys():
@@ -305,16 +297,22 @@ class settings:
     # Changing virtual controller x-axis
     def turn():
 
+        # x = average line position
         x = game.avg
-        slope = game.slope *2
+        # slope = lines average slope
+        slope = game.slope * 2
+        # speed = car speed, 1 or 2
         speed = game.speed
 
+        # Calculations
         ss = slope / 20 + speed
         if ss == 0:
             ss = 1
 
+        # Overall turning force
         x = 16400 + x * 41 / ss
 
+        # Sending turning force to virtual joystick
         x = int(x)
         vjoy.data.wAxisX = 0x0 + x
 
@@ -323,26 +321,32 @@ class settings:
     def speed():
 
         # GAS
+        # ag = player aggression
         ag = game.aggression
+        # v = car speed, 1 or 2
         v = game.speed
+        # slope = lines average slope
         slope = game.slope
         x = abs(game.avg)
 
-        # prosentit!
-        x = (x / 200) * 8200
-        slope = (1.1 - slope / 50) * 8200
+        # Calculations percents
+        # x = average turning force
+        x = (x / 200) * 8000
+        slope = (1.1 - slope / 50) * 8000
         ag = (100 - ag) * 25
         v = 7500 - 1 / v * 10000
 
+        # Overall gas
         y = x + slope + v + ag
         if y > 16400:
             y = 16400
 
         # BRAKE
         c = settings.brake()
-        if c != 0:
+        if c > 16400:
             y = c
 
+        # Sending gas/braking force to virtual joystick
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
 
@@ -350,14 +354,9 @@ class settings:
         return
     # Checking if braking_force != 0, changing virtual controller y-axis
     def brake():
+        # old and new braking lines
         braking = game.braking_force
         old_braking = game.old_braking_force
-
-        ag = game.aggression
-        v = game.speed
-        slope = game.slope
-        x = abs(game.avg)
-        c = 0
 
         if braking != 0 and old_braking == 0:
             braking = 20
@@ -369,38 +368,43 @@ class settings:
 
         braking = braking * 2
         old_braking = old_braking * 1.5
-        # Prosentit
+        # Percents
         braking = 0.025 * braking * 8200
         old_braking = 0.0333 * old_braking * 8200
 
+
+
+        # Overall braking force, 16400 = 0 braking
         c = 16400 + braking + old_braking
 
         return c
-
 
     #   TENSORFLOW
     # Saving inputs and outputs
     def model_record():
         pygame.event.pump()
 
+        # x = average line position
         x = game.avg
+        # slope = lines average slope
         slope = game.slope
+        # v = car speed, 1 or 2
         v = game.speed
+        # brake = braking line counts
         brake = game.braking_force
+        # old_brake = last frame braking line counts
         old_brake = game.old_braking_force
 
-        # Inputs
+        # Saving input data
         input_data.append([x, slope, brake, old_brake, v])
 
-        # Turn record
+        # Recording turning force
         left, straight, right = settings.x_position()
         output_data_x.append([left, straight, right])
 
-        # Gas/Braking record
+        # Recording gas and braking force
         gas, zero, brake = settings.y_position()
         output_data_y.append([gas, zero, brake])
-
-
 
         # Saving data
         if len(input_data) % 250 == 0:
@@ -409,6 +413,7 @@ class settings:
             # np.save("output_x", output_data_x)
             # np.save("output_y", output_data_y)
         return
+
     # Getting X-axis info (Turing keys)
     def x_position():
 
@@ -432,123 +437,36 @@ class settings:
             straight = [1]
 
         return left, straight, right
+
     # Getting Y-axis info (Gas / braking axis)
     def y_position():
 
-        # Values for axis0-4
+            # Values for axis0-4
 
-        gas = [0]
-        zero = [0]
-        brake = [0]
+            gas = [0]
+            zero = [0]
+            brake = [0]
 
-        # Gas 1 to -1
-        gas = float(pygame.joystick.Joystick(0).get_axis(2))
-        gas = (gas - 1) / -2
-        if gas > 0.999:
-            gas = 1
-        if gas < 0.005:
-            gas = 0
+            # Gas 1 to -1
+            gas = float(pygame.joystick.Joystick(0).get_axis(2))
+            gas = (gas - 1) / -2
+            if gas > 0.999:
+                gas = 1
+            if gas < 0.005:
+                gas = 0
 
-        # Braking
-        brake = float(pygame.joystick.Joystick(0).get_axis(3))
-        brake = (1 - brake) / 2
-        if brake > 0.999:
-            brake = 1
-        if brake < 0.005:
-            brake = 0
+            # Braking
+            brake = float(pygame.joystick.Joystick(0).get_axis(3))
+            brake = (1 - brake) / 2
+            if brake > 0.999:
+                brake = 1
+            if brake < 0.005:
+                brake = 0
 
-        if gas == 0 and brake == 0:
-            zero = 1
+            if gas == 0 and brake == 0:
+                zero = 1
 
-        return gas, zero, brake
-
-
-    # Driving with trained model
-    def model_drive(model_x, model_y):
-
-        # Input shape change
-        input = settings.input_shape()
-
-        # Prediction x-axis
-        x = settings.model_turn(model_x, input)
-
-        # Prediction y-axis
-        y = settings.model_gas(model_y, input)
-
-        settings.controller(x, y)
-
-        return
-    # Changing input data
-    def input_shape():
-        x = game.avg
-        slope = game.slope
-        v = game.speed
-        brake = game.braking_force
-        old_brake = game.old_braking_force
-
-        # Inputs
-        input = []
-        input.append([x, slope, brake, old_brake, v])
-
-        x = []
-        for i in range(len(input)):
-            x.append([input[i], [0, 0, 0, 0, 0]])
-
-        input = np.asarray(x)
-
-        return input
-    # Getting turning percent
-    def model_turn(model_x, input):
-
-        model = model_x
-        prediction = model.predict(input)
-
-        left = np.sum(prediction[0:, :3])
-        right = np.sum(prediction[0:, 4:])
-
-        x_axis = right - left
-
-        # x_axis = 1
-
-        return x_axis
-    # Getting gas percent
-    def model_gas(model_y, input):
-
-        model = model_y
-        prediction = model.predict(input)
-
-        gas = np.sum(prediction[0:, :3])
-        brake = np.sum(prediction[0:, 4:])
-
-
-
-        if game.braking_force == 0 and game.old_braking_force == 0:
-            brake = 0
-        else:
-            gas = 0
-
-        y_axis = brake - gas
-        # print(gas)
-        # print(brake)
-        # print("-------")
-        # print(y_axis)
-
-        return y_axis
-    # Updating controller
-    def controller(x, y):
-
-        # turn
-        x = 16400 + (16400 * x)
-        x = int(x)
-        vjoy.data.wAxisX = 0x0 + x
-
-        # gas
-        y = 16400 + (16400 * y)
-        y = int(y)
-        vjoy.data.wAxisY = 0x0 + y
-
-        vjoy.update()
-        return
+            return gas, zero, brake
 
 
     #   SETUPS
@@ -558,10 +476,7 @@ class settings:
         # Displaying video
         if game.display == 1:
             cv2.imshow(winname, video)
-            if game.ai == 1 and game.ai_record == 1:
-                cv2.moveWindow(winname, -880, 40)
-            else:
-                cv2.moveWindow(winname, 1055, 40)
+            cv2.moveWindow(winname, 1055, 40)
         # Printing fps, note waitkey
         if game.fps == 1:
             print(round(1/(time.time() - last_time)))
@@ -569,95 +484,85 @@ class settings:
 
         return last_time
 
-
 if __name__ == '__main__':
 
-    game = settings()
-    last_time = time.time()
-    check_key = key_check()
-    vjoy = pyvjoy.VJoyDevice(1)
+        game = settings()
+        last_time = time.time()
+        check_key = key_check()
+        vjoy = pyvjoy.VJoyDevice(1)
 
-    # Printing recording device
-    if game.ai == 1:
-        print("AI = 1")
-        # Joystick info
-        if game.ai_record == 1:
-            print("Recording inputs")
-            pygame.display.init()
-            pygame.joystick.init()
-            pygame.joystick.Joystick(0).init()
+        # Printing recording device
+        if game.ai == 1:
+            print("AI = 1")
+            # Joystick info
+            if game.ai_record == 1:
+                print("Recording inputs")
+                pygame.display.init()
+                pygame.joystick.init()
+                pygame.joystick.Joystick(0).init()
 
-            # Prints the joystick's name
-            JoyName = pygame.joystick.Joystick(0).get_name()
-            print("Name of the recording device:")
-            print(JoyName)
+                # Prints the joystick's name
+                JoyName = pygame.joystick.Joystick(0).get_name()
+                print("Name of the recording device:")
+                print(JoyName)
 
-            # input data all
-            input_data = []
-            # turn
-            output_data_x = []
-            # gas / brake
-            output_data_y = []
-        else:
-            # Loading models
-            model_x = keras.models.load_model("x_axis.h5")
-            model_y = keras.models.load_model("y_axis.h5")
-            print("Loading models")
+                # input data all
+                input_data = []
+                # turn
+                output_data_x = []
+                # gas / brake
+                output_data_y = []
 
-    print("F to start")
-    F = 0
-    while F == 0:
-        if 'F' in key_check():
-            F = 1
-            print("Running")
-            print("Q to break")
-            while True:
-                check_key = key_check()
+        print("F to start")
+        F = 0
+        while F == 0:
+            if 'F' in key_check():
+                F = 1
+                print("Running")
+                print("Q to break")
+                while True:
+                    check_key = key_check()
 
-                video = settings.start()
-                video = cv2.resize(video, (851, 371))
-                video_copy = np.copy(video)
+                    video = settings.start()
+                    video = cv2.resize(video, (851, 371))
+                    video_copy = np.copy(video)
 
-                # SPEED CHECK > 100!
-                masked_white = settings.region_of_interest_speed(video_copy, video)
-                white_pixels = settings.white_pixels(masked_white)
-                video = settings.speed_check(white_pixels, video)
+                    # SPEED CHECK > 100!
+                    masked_white = settings.region_of_interest_speed(video_copy, video)
+                    white_pixels = settings.white_pixels(masked_white)
+                    video = settings.speed_check(white_pixels, video)
 
-                # TURNING LINE
-                region = settings.region_of_interest_turn(video_copy, video)
-                green_pixels = settings.green_pixels(region)
-                video, lines = settings.turning_line(green_pixels, video)
-                average_line = settings.average_line(lines)
+                    # TURNING LINE
+                    region = settings.region_of_interest_turn(video_copy, video)
+                    green_pixels = settings.green_pixels(region)
+                    video, lines = settings.turning_line(green_pixels, video)
+                    average_line = settings.average_line(lines)
 
-                # BRAKING LINE
-                region = settings.region_of_interest_brake(video_copy, video)
-                red_pixels = settings.red_pixels(region)
-                video, lines = settings.braking_line(red_pixels, video)
+                    # BRAKING LINE
+                    region = settings.region_of_interest_brake(video_copy, video)
+                    red_pixels = settings.red_pixels(region)
+                    video, lines = settings.braking_line(red_pixels, video)
 
-                # Script and Tensorflow 0 -> script drive
-                if game.ai == 0:
-                    settings.keys()
-                elif game.ai == 1:
-                    if game.ai_record == 1:
-                        settings.model_record()
+                    # Script and Tensorflow 0 -> script drive
+                    if game.ai == 0:
+                        settings.keys()
+                    elif game.ai == 1:
+                        if game.ai_record == 1:
+                            settings.model_record()
+
                     else:
-                        settings.model_drive(model_x, model_y)
-                else:
-                    print("Error")
-                    F = 0
+                        print("Error")
+                        F = 0
 
-                # Setups (FPS print and Display)
-                setups = game.setups(last_time)
 
-                if game.ai_record == 1:
-                    wait_key = 100
-                else:
+                    setups = game.setups(last_time)
+
                     wait_key = 1
-                if cv2.waitKey(wait_key) & 0xFF == ord('q'):
-                    break
-                if 'Q' in check_key:
-                    F = 0
-                    print("F to continue")
-                    break
-            cv2.destroyAllWindows()
-            vjoy.reset()
+                    if cv2.waitKey(wait_key) & 0xFF == ord('q'):
+                        break
+                    if 'Q' in check_key:
+                        F = 0
+                        print("F to continue")
+                        break
+                cv2.destroyAllWindows()
+                vjoy.reset()
