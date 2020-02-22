@@ -42,6 +42,7 @@ Training model with balanced data, inputs / outputs
 
 ------------------------------
 
-Demonstration video on youtube.com
+Demonstration video on youtube
 
+https://www.youtube.com/watch?v=89vKA5qj_Os&feature=youtu.be
 ------------------------------
