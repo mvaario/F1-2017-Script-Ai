@@ -16,6 +16,7 @@ class balance:
 
     # X axis balance and shuffle
     def x_axis(self, input_x, output_x):
+
         # shuffle
         input_x, output_x = state.shuffle(input_x, output_x)
 
@@ -37,6 +38,7 @@ class balance:
 
     # Y axis balance and shuffle
     def y_axis(self, input_y, output_y):
+
         # shuffle
         input_y, output_y = state.shuffle(input_y, output_y)
 
@@ -75,6 +77,7 @@ class balance:
         output = left[0]
         output = output[1]
 
+
         left = []
         right = []
         straight = []
@@ -89,6 +92,8 @@ class balance:
                 right.append([input_data, output_data])
             else:
                 straight.append([input_data, output_data])
+
+
 
         left = np.asarray(left)
         right = np.asarray(right)
@@ -117,8 +122,9 @@ class balance:
         input = input.reshape(-1, 5)
         output = output.reshape(-1, 3)
 
-        return input, output
 
+
+        return input, output
     # Changing output data from [x, 3] to [x, 7]
     def output_change(self, output):
         output_final = []
@@ -143,18 +149,16 @@ class balance:
 
         output = np.asarray(output_final)
         return output
-
     # Changing input shape
     def input_shape(self, input):
         x = []
         for i in range(len(input)):
-            x.append([input[i], [0, 0, 0, 0, 0]])
+            x.append([input[i], [0,0,0,0,0]])
 
         data = np.asarray(x)
         input = data
 
         return input
-
     # Shuffle data
     def shuffle(self, input, output):
         # Shuffle data
@@ -165,6 +169,8 @@ class balance:
         output = output[indices]
 
         return input, output
+
+
 
     # Fitting x-inputs and x-outputs
     def model_x(self, input_x, output_x):
@@ -223,15 +229,12 @@ if __name__ == '__main__':
     # Y-axis balance (len, shape)
     input_y, output_y = state.y_axis(input_y, output_y)
 
-    # mode X-axis
+
+    # model X-axis
     state.model_x(input_x, output_x)
 
     # model Y-axis
     state.model_y(input_y, output_y)
-
-    # Example
-    # print(input_x)
-
 
 
 

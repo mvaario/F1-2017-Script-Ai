@@ -219,13 +219,6 @@ if __name__ == '__main__':
     output_x = np.load('output_x.npy', allow_pickle=True)
     output_y = np.load('output_y.npy', allow_pickle=True)
 
-
-    # Test inputs / outputs
-    # input = np.array([[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0],[0,0,2,0,0],[0,0,0,0,3],[1,0,0,0,0]])
-    # output_x = np.array([[1,0,0], [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0]])
-    # output_y = np.array([[1,0,0], [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0],    [0,1,0],    [0,0,1],    [1,0,0]])
-
-
     input_x = input
     input_y = input
 

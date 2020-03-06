@@ -75,6 +75,7 @@ class settings:
         cv2.fillPoly(video, polygons, (100, 100, 100))
 
         return masked_white
+
     def white_pixels(video):
         hsv = video
         low_white = np.array([160, 170, 190])  # 50, 50, 180
@@ -82,6 +83,7 @@ class settings:
         white_pixels = cv2.inRange(hsv, low_white, up_white)
         # cv2.imshow("test", white_pixels)
         return white_pixels
+
     # Chekking if speed is >100, saving self.speed
     def speed_check(white_pixels, video):
 
@@ -137,6 +139,7 @@ class settings:
         game.x = x_ylä
 
         return masked_green
+
     # Checking green pixels from best line
     def green_pixels(video):
         hsv = cv2.cvtColor(video, cv2.COLOR_RGB2HSV)
@@ -145,6 +148,7 @@ class settings:
         green_pixels = cv2.inRange(hsv, low_green, up_green)
         # cv2.imshow("test", green_pixels)
         return green_pixels
+
     # Displaying best line lines
     def turning_line(green_pixels, video):
 
@@ -157,6 +161,7 @@ class settings:
                 x1, y1, x2, y2 = line[0]
                 cv2.line(video, (x1, y1), (x2, y2), (0, 0, 255), 1)
         return video, lines
+
     # Calculating avg line, saving avg X/Y positions(self.x1/x2/y1/y2) and slopes
     def average_line(lines):
         old_avg = game.avg + 425
@@ -253,6 +258,7 @@ class settings:
         # cv2.imshow(winname, masked_red)
 
         return masked_red
+
     # Finding red pixels
     def red_pixels(video):
 
@@ -263,6 +269,7 @@ class settings:
         red_pixels = cv2.inRange(hsv, low_red, up_red)
         # cv2.imshow("test", reds)
         return red_pixels
+
     # Displaying braking lines. Saving amount braking lines found, self.braking_force
     def braking_line(red_pixels, video):
         braking = game.braking_force
@@ -303,6 +310,7 @@ class settings:
         vjoy.update()
         return
     # Changing virtual controller x-axis
+
     def turn():
 
         x = game.avg
@@ -319,6 +327,7 @@ class settings:
         vjoy.data.wAxisX = 0x0 + x
 
         return
+
     # Changing virtual controller y-axis
     def speed():
 
@@ -348,6 +357,7 @@ class settings:
 
 
         return
+
     # Checking if braking_force != 0, changing virtual controller y-axis
     def brake():
         braking = game.braking_force
@@ -400,8 +410,6 @@ class settings:
         gas, zero, brake = settings.y_position()
         output_data_y.append([gas, zero, brake])
 
-
-
         # Saving data
         if len(input_data) % 250 == 0:
             print("Frames", len(input_data))
@@ -409,6 +417,7 @@ class settings:
             # np.save("output_x", output_data_x)
             # np.save("output_y", output_data_y)
         return
+
     # Getting X-axis info (Turing keys)
     def x_position():
 
@@ -432,6 +441,7 @@ class settings:
             straight = [1]
 
         return left, straight, right
+
     # Getting Y-axis info (Gas / braking axis)
     def y_position():
 
@@ -478,6 +488,7 @@ class settings:
         settings.controller(x, y)
 
         return
+
     # Changing input data
     def input_shape():
         x = game.avg
@@ -497,6 +508,7 @@ class settings:
         input = np.asarray(x)
 
         return input
+
     # Getting turning percent
     def model_turn(model_x, input):
 
@@ -511,6 +523,7 @@ class settings:
         # x_axis = 1
 
         return x_axis
+
     # Getting gas percent
     def model_gas(model_y, input):
 
@@ -519,8 +532,6 @@ class settings:
 
         gas = np.sum(prediction[0:, :3])
         brake = np.sum(prediction[0:, 4:])
-
-
 
         if game.braking_force == 0 and game.old_braking_force == 0:
             brake = 0
@@ -534,6 +545,7 @@ class settings:
         # print(y_axis)
 
         return y_axis
+
     # Updating controller
     def controller(x, y):
 
