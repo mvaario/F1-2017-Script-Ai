@@ -1,7 +1,9 @@
-# Finding best line postion
-# Fiding brake line postion
+# Finding best line position
+# Finding brake line position
 # Drawing lines
+# AI setups
 # made by mvaario
+
 
 import cv2
 import numpy as np
@@ -241,3 +243,4 @@ class ai:
         input = np.asarray(x)
 
         return input
+
