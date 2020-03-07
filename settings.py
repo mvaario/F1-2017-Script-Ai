@@ -1,7 +1,5 @@
-# Setups
-win_name = "F1 Screen"
-
 # Display settings
+win_name = "F1 Screen"
 dual_monitor = True
 width = 1920
 height = 1080
