@@ -2,9 +2,9 @@
 # Taking ss from game window and finding the best line
 # Recording Controller / Wheel positions
 # Recording Gas / Brake
-# Recording best line position (x-pos, y-pos and slope), added recording speed
+# Recording bestline position (x-pos, y-pos, slope and speed)
 # Saving inputs (best line position) and outputs (wheel position and gas), input_data.npy, output_x.npy and output_y.npy
-# Added script to drive without Ai training (self.ai = 0)
+# Added script to drive without Ai training (settings.py ai = False and ai_record = False)
 # made by mvaario
 
 from settings import *
@@ -222,8 +222,6 @@ class main:
 
         return
 
-
-
     # SETUPS
     # Displaying video and FPS
     def setups(self, last_time):
@@ -257,6 +255,7 @@ if __name__ == '__main__':
     check_key = key_check()
     vjoy = pyvjoy.VJoyDevice(1)
 
+    # Model record
     if ai and ai_record:
         # Printing recording device
         ai.record_setup()
@@ -268,6 +267,7 @@ if __name__ == '__main__':
         # gas / brake
         output_data_y = []
 
+    # Model loading
     elif ai and not ai_record:
         model_x, model_y = ai.model_setup()
 
@@ -293,6 +293,7 @@ if __name__ == '__main__':
             # Keys
             main.driving_mode()
 
+            # Setup
             wait_key, last_time = main.setups(last_time)
 
             if cv2.waitKey(wait_key) & 0xFF == ord('q'):
