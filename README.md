@@ -10,38 +10,66 @@ Project intent to make self-driving script / ai for F1 2017 game using Python
 
 ------------------------------
 
-Game.py
+main.py
 
-Taking screenshot from game window and finding the best line.
 
-Recording Controller / Wheel positions.
 
-Recording Gas / Brake.
-
-Recording best line position (x-pos, y-pos and slope), added recording speed.
-
-Saving inputs (best line position) and outputs (wheel position and gas), input_data.npy, output_x.npy and output_y.npy.
-
-Script to drive without Ai training (self.ai = 0).
-
-Loading and driving with traned models from training_model.py
+main loop
 
 ------------------------------
 
-training_model.py
+sprites.py
 
-Loading recorded data from game.py
 
-Balancing recorded data to same length and shuffling data
 
-Changing input and output data dimensions
+Finding bestline
 
-Changing output lens from [3] to [7]
+Finding brakingline
 
-Training model with balanced data, inputs / outputs
+Defining speed
+
+Drawing bestlines and braking lines
+
+AI setups
+
+Loading AI models
+
+Changing input shape
 
 ------------------------------
 
-Demonstration video on youtube
+keys.py
+
+
+
+Calculating script keys
+
+Recording AI models
+
+AI predictions
+
+Sending AI pridections to joystick
+
+------------------------------
+
+line_calculations.py
+
+
+
+Calculating average line
+
+Calculating slope
+
+------------------------------
+
+settings.py
+
+
+
+User setups
+
+------------------------------
+
+Old demonstration video on youtube (new coming soon)
 
 https://www.youtube.com/watch?v=ErdoywyTK10&feature=youtu.be
