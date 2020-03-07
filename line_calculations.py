@@ -71,6 +71,7 @@ class calculations:
 
         return x, y
 
+
     # Calculating slope
     def slope(x, y, slope):
         # SLOPE
