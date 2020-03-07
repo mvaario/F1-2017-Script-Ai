@@ -162,6 +162,7 @@ class keys:
 
         return y_axis
 
+    # Sending ai predictions to virtual joystick
     def model_update(x_axis, y_axis):
         # Getting pyvjoy device
         vjoy = pyvjoy.VJoyDevice(1)
@@ -170,9 +171,6 @@ class keys:
         x = 16400 + (16400 * x_axis)
         x = int(x)
         vjoy.data.wAxisX = 0x0 + x
-
-
-
 
         # Gas / brake
         y = 16400 + (16400 * y_axis)
