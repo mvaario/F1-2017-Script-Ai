@@ -13,7 +13,6 @@ Project intent to make self-driving script / ai for F1 2017 game using Python
 main.py
 
 
-
 main loop
 
 ------------------------------
@@ -28,7 +27,7 @@ Finding brakingline
 
 Defining speed
 
-Drawing bestlines and braking lines
+Drawing bestlines and brakinglines
 
 AI setups
 
@@ -48,7 +47,7 @@ Recording AI models
 
 AI predictions
 
-Sending AI pridections to joystick
+Sending AI predictions to joystick
 
 ------------------------------
 
