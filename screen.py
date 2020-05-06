@@ -1,10 +1,9 @@
-# Game F1 2017, intent to make self-driving script / ai
-# Taking ss from game window and finding the best line
-# Recording Controller / Wheel positions
-# Recording Gas / Brake
-# Recording bestline position (x-pos, y-pos, slope and speed)
-# Saving inputs (best line position) and outputs (wheel position and gas), input_data.npy, output_x.npy and output_y.npy
-# Added script to drive without Ai training (settings.py ai = False and ai_record = False)
+# Everything for screen analysing
+# - Finding best line
+# - Finding braking line
+# - Checking speed
+# - Calculating average lines
+# - Drawing lines
 # made by mvaario
 
 
@@ -104,8 +103,6 @@ class finding_lane:
 
         return green_pixels
 
-
-
     # BRAKE
     def brake_start(self, video, video_copy):
         region = finding_lane.brake_region(self, video, video_copy)
@@ -115,6 +112,7 @@ class finding_lane:
         drawing.brakeline(self, video, red_pixels)
 
         return
+
     # Finding best line position
 
     def brake_region(self, video, video_copy):
@@ -160,11 +158,9 @@ class finding_lane:
 
         return red_pixels
 
-
-
     # SPEED
     def speed_start(self, video, video_copy):
-        region = finding_lane.speed_region(self,video, video_copy)
+        region = finding_lane.speed_region(self, video, video_copy)
         calculations.white_pixels(self, region)
 
         return
@@ -184,7 +180,6 @@ class finding_lane:
         cv2.fillPoly(video, polygons, (100, 100, 100))
 
         return region
-
 
 
 # Drawing lines
@@ -244,13 +239,10 @@ class drawing:
         if old_brake < 0:
             old_brake = 0
 
-
         self.braking = braking
         self.old_braking = old_brake
 
         return
-
-
 
 
 # Calculating average positions
@@ -272,7 +264,6 @@ class calculations:
         # Adding lines start and end points together
         if lines is not None:
             for line in lines:
-
                 x1 = np.array(line)[0, 0]
                 x2 = np.array(line)[0, 2]
                 y1 = np.array(line)[0, 1]

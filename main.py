@@ -2,7 +2,7 @@
 # Taking ss from game window and finding the best line
 # Recording Controller / Wheel positions
 # Recording Gas / Brake
-# Recording bestline position (x-pos, y-pos, slope and speed)
+# Recording best line position (x-pos, y-pos, slope and speed)
 # Saving inputs (best line position) and outputs (wheel position and gas), input_data.npy, output_x.npy and output_y.npy
 # Added script to drive without Ai training (settings.py ai = False and ai_record = False)
 # made by mvaario
@@ -59,16 +59,16 @@ class main:
         input_y = input
 
         # X-axis balance (len, shape)
-        input_x, output_x = data.x_axis(input_x, output_x)
+        input_x, output_x = balance.x_axis(input_x, output_x)
 
         # Y-axis balance (len, shape)
-        input_y, output_y = data.y_axis(input_y, output_y)
+        input_y, output_y = balance.y_axis(input_y, output_y)
 
         # model X-axis
-        data.model_x(input_x, output_x)
+        training.model_x(input_x, output_x)
 
         # model Y-axis
-        data.model_y(input_y, output_y)
+        training.model_y(input_y, output_y)
 
         print("Full data lenght", len(input))
         print("Turning data", len(input_x))

@@ -1,8 +1,11 @@
+# User settings
+# - Printing information
+# - Loading models
+
 import time
 import cv2
 import pygame
 from tensorflow import keras
-
 
 # Display settings
 win_name = "F1 Screen"
@@ -20,11 +23,12 @@ ai = True
 record = False
 sample_rate = 20
 save = False
-data_balance = False
+data_balance = True
 
 # Screen position
 width = width - 1550
 height = height - 626
+
 
 class options:
 

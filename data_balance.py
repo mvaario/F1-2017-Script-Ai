@@ -1,7 +1,8 @@
-# Loading recorded data
-# Balancing recorded data to same length and shuffling data
-# Changing output values from [3] to [7]
-# Training model with balanced data, inputs / outputs
+# Data balancing and AI training
+# - Loading recorded data
+# - Balancing recorded data to same length and shuffling data
+# - Changing output values from [3] to [7]
+# - Training model with balanced data, inputs / outputs
 # made by mvaario
 
 from settings import *
@@ -10,25 +11,25 @@ import numpy as np
 
 
 # AI data balancing
-class data:
+class balance:
 
     # X axis balance and shuffle
     def x_axis(input_x, output_x):
 
         # shuffle
-        input_x, output_x = data.shuffle(input_x, output_x)
+        input_x, output_x = balance.shuffle(input_x, output_x)
 
         # Changing len
-        input_x, output_x = data.axis_len(input_x, output_x)
+        input_x, output_x = balance.axis_len(input_x, output_x)
 
         # Changin shape
-        input_x = data.input_shape(input_x)
+        input_x = balance.input_shape(input_x)
 
         # Output change
-        output_x = data.output_change(output_x)
+        output_x = balance.output_change(output_x)
 
         # shuffle
-        input_x, output_x = data.shuffle(input_x, output_x)
+        input_x, output_x = balance.shuffle(input_x, output_x)
 
         output_x = output_x.reshape(-1)
 
@@ -38,19 +39,19 @@ class data:
     def y_axis(input_y, output_y):
 
         # shuffle
-        input_y, output_y = data.shuffle(input_y, output_y)
+        input_y, output_y = balance.shuffle(input_y, output_y)
 
         # Changing len
-        input_y, output_y = data.axis_len(input_y, output_y)
+        input_y, output_y = balance.axis_len(input_y, output_y)
 
         # Changin shape
-        input_y = data.input_shape(input_y)
+        input_y = balance.input_shape(input_y)
 
         # Output change
-        output_y = data.output_change(output_y)
+        output_y = balance.output_change(output_y)
 
         # Shuffle
-        input_y, output_y = data.shuffle(input_y, output_y)
+        input_y, output_y = balance.shuffle(input_y, output_y)
 
         output_y = output_y.reshape(-1)
 
@@ -165,6 +166,10 @@ class data:
         output = output[indices]
 
         return input, output
+
+
+# AI training
+class training:
 
     # Fitting x-inputs and x-outputs
     def model_x(input_x, output_x):

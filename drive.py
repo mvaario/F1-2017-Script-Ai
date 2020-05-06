@@ -1,3 +1,12 @@
+# Everything for driving and sending inputs
+# - Calculating script keys
+# - Recording AI models
+# - AI predictions
+# - Sending AI predictions to joystick
+# made by mvaario
+
+
+
 import pyvjoy
 from main import *
 from settings import *
