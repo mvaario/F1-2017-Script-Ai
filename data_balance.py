@@ -8,6 +8,7 @@ from settings import *
 from tensorflow import keras
 import numpy as np
 
+
 # AI data balancing
 class data:
 

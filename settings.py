@@ -26,8 +26,6 @@ data_balance = False
 width = width - 1550
 height = height - 626
 
-# Balance
-
 class options:
 
     # Recording settings

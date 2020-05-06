@@ -22,6 +22,7 @@ class main:
         self.y = 0
         self.slope = 0
 
+
         # Braking
         self.brake = 0
         self.old_brake = 0

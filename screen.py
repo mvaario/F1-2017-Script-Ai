@@ -58,6 +58,7 @@ class finding_lane:
         calculations.slope(self)
 
         return
+
     # Best line region
     def turn_region(self, video, video_copy):
         x = self.x
@@ -89,6 +90,7 @@ class finding_lane:
         cv2.fillPoly(video, polygons, (255, 0, 0))
 
         return region
+
     # Finding green pixels from the region
     def green_pixels(region):
         # Converting colors (RBG to HSV)
@@ -102,6 +104,8 @@ class finding_lane:
 
         return green_pixels
 
+
+
     # BRAKE
     def brake_start(self, video, video_copy):
         region = finding_lane.brake_region(self, video, video_copy)
@@ -112,6 +116,7 @@ class finding_lane:
 
         return
     # Finding best line position
+
     def brake_region(self, video, video_copy):
         # Changing avg y-axis
         x = self.x
@@ -140,6 +145,7 @@ class finding_lane:
         cv2.fillPoly(video, polygons, (0, 0, 255))
 
         return region
+
     # Finding red pixels from the region
     def red_pixels(region):
 
@@ -153,6 +159,7 @@ class finding_lane:
         red_pixels = cv2.inRange(hsv, low_red, up_red)
 
         return red_pixels
+
 
 
     # SPEED
@@ -177,6 +184,8 @@ class finding_lane:
         cv2.fillPoly(video, polygons, (100, 100, 100))
 
         return region
+
+
 
 # Drawing lines
 class drawing:
@@ -240,6 +249,9 @@ class drawing:
         self.old_braking = old_brake
 
         return
+
+
+
 
 # Calculating average positions
 class calculations:

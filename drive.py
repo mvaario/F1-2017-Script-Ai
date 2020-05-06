@@ -147,7 +147,6 @@ class ai_record:
     def y_position():
 
         # Values for axis0-4
-
         gas = [0]
         zero = [0]
         brake = [0]
