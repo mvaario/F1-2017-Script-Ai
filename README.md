@@ -1,4 +1,4 @@
-F1 2017 game script / Ai drive lol
+F1 2017 game script / Ai drive
 
 ------------------------------
 
