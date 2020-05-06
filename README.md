@@ -50,6 +50,21 @@ Everything for driving and sending inputs
 
 ------------------------------
 
+Data_balance.py
+
+Balancing data for AI to train
+
+Training AI
+
+
+- Loading recorded data
+- Balancing recorded data to same length
+- Shuffling data
+- Changing output values from [3] to [7]
+- Training model with balanced data, inputs / outputs
+
+------------------------------
+
 settings.py
 
 User settings
