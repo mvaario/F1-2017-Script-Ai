@@ -14,21 +14,20 @@ width = 1920
 height = 1080
 running = False
 
-wait_key = 30
+wait_key = 10
 display = True
 display_fps = False
 
 # AI setup
-ai = True
-record = False
+ai = False
+record = True
 sample_rate = 20
 save = False
-data_balance = True
+data_balance = False
 
 # Screen position
-width = width - 1550
-height = height - 626
-
+pos_x = width / 2
+pos_y = height / 2
 
 class options:
 
@@ -74,8 +73,8 @@ class options:
             if ai and record:
                 cv2.moveWindow(win_name, -880, 40)
             else:
-                # cv2.moveWindow(win_name, 1055, 40)
-                cv2.moveWindow(win_name, -880, 40)
+                cv2.moveWindow(win_name, 1055, 40)
+                # cv2.moveWindow(win_name, -880, 40)
 
         # Printing fps, not settings wait_key
         if display_fps:

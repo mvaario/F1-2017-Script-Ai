@@ -28,7 +28,7 @@ class main:
         self.old_brake = 0
 
         # Aggression
-        self.ag = 50
+        self.ag = 20
 
         # speed
         self.v = 1
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
         print("F to start")
         while not running:
-            if 'F' in key_check():
+            # if 'F' in key_check():
                 print("Running")
                 print("Q to break")
                 while True:

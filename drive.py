@@ -28,11 +28,14 @@ class script:
 
         x = self.x
         slope = self.slope * 2
-        speed = self.v
+        v = self.v
 
-        ss = slope / 20 + speed
+
+        ss = slope / 20 + v
         if ss == 0:
             ss = 1
+
+        x = x * 2
 
         x = 16400 + x * 41 / ss
 
@@ -51,20 +54,22 @@ class script:
         x = abs(self.x)
 
         # prosentit!
-        x = (x / 200) * 8200
-        slope = (1.1 - slope / 50) * 8200
-        ag = (100 - ag) * 25
-        v = 7500 - 1 / v * 10000
+        x = x * 50
+        slope = slope * 100
+        ag = (100 - ag) * 50
+        v = v * 100
 
-        y = x + slope + v + ag
+        y = x + slope + v + ag + 5000
         if y > 16400:
             y = 16400
 
+
         # BRAKE
         c = script.brake(self)
-        if c != 0:
+        if c > 16400:
             y = c
 
+        # print(y)
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
         return
@@ -73,14 +78,9 @@ class script:
     def brake(self):
         b = self.brake
         o_b = self.old_brake
-
-        ag = self.ag
-        v = self.v
-        slope = self.slope
-        x = abs(self.x)
         c = 0
 
-        if b != 0:
+        if b > 5:
             b = 20
             o_b = 20
         if b > 20:

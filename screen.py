@@ -22,11 +22,11 @@ class screen:
             # Checking ai from settings
             if ai and record:
                 # video = grab_screen(region=(-width, height, width + 1180, height + 349))
-                video = grab_screen(region=(-1920, 0, 0, 1080))
+                video = grab_screen(region=(425, 450, 1495, 950))
             else:
-                # video = grab_screen(region=(-1700, 400, -850, 770))
-                video = grab_screen(region=(-1920, 0, 0, 1080))
-            # Converting colors BGR to RGB
+                # video = grab_screen(region=(-1385, 440, -535, 720))
+                video = grab_screen(region=(-1495, 450, -425, 950))
+            # Converting colors BGR to RGBf
             video = cv2.cvtColor(video, cv2.COLOR_BGR2RGB)
 
         else:
@@ -35,7 +35,7 @@ class screen:
             return running
 
         # Resizing the window
-        video = cv2.resize(video, (851, 349))
+        video = cv2.resize(video, (535, 250))
         # Making copy of the window
         video_copy = np.copy(video)
 
@@ -61,22 +61,13 @@ class finding_lane:
     # Best line region
     def turn_region(self, video, video_copy):
         x = self.x
-
         # Calculating x_down position
-        if x > 200:
-            x_down = 100
-        elif x < -200:
-            x_down = -100
-        else:
-            x_down = int(x / 2)
 
-        # Calculating y position
-        y = abs(int(x / 1.5))
-        if y > 50:
-            y = 50
+        x_d = int(x / 1.5)
 
+        y = 20
         # Making area to analyze
-        polygons = np.array([[(300 + x_down, 170), (550 + x_down, 170), (450 + x, y), (400 + x, y)]])
+        polygons = np.array([[(168 + x_d, 140), (367 + x_d, 140), (292+x, y), (243+x, y)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
         # Masking video copy, aka making black screen
@@ -118,19 +109,17 @@ class finding_lane:
     def brake_region(self, video, video_copy):
         # Changing avg y-axis
         x = self.x
-        y = self.y + 200
+        y = self.y
         v = self.v
-        v = 10
-        y2 = int(y / 3) - (10 * v)
+        v = 2
+        y = int(y/2-v**2*5)
+        if y > 30:
+            y = 30
 
-        if y < 10:
-            y = 10
-        if y > 50:
-            y = 50
-        x = int(x / 2)
+        x = int(x / 3)
 
         # Making area to analyze
-        polygons = np.array([[(410 + x, y), (440 + x, y), (450 + x, y2), (400 + x, y2)]])
+        polygons = np.array([[(252 + x, 40), (283 + x, 40), (288+x, y), (247+x, y)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
         # Masking video copy, aka making black screen
@@ -168,10 +157,8 @@ class finding_lane:
     # Speedo meter region
     def speed_region(self, video, video_copy):
 
-        if ai is not True or record is not True:
-            polygons = np.array([[(750, 350), (780, 350), (780, 320), (750, 320)]])
-        else:
-            polygons = np.array([[(780, 350), (810, 350), (810, 320), (780, 320)]])
+
+        polygons = np.array([[(510, 250), (535, 250), (535, 230), (510, 230)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
         mask = np.zeros_like(video_copy)
@@ -217,7 +204,7 @@ class drawing:
         lines = cv2.HoughLinesP(canny, 1, np.pi / 180, 1, maxLineGap=10, minLineLength=1)
 
         # Only drawing lines if speed is 2 and driving straight
-        if lines is not None and v == 2 and slope > 8 and abs(x) < 50:
+        if lines is not None and v == 2 and slope > 1 and x < 25:
             for line in lines:
                 i = i + 1
                 x1, y1, x2, y2 = line[0]
@@ -239,8 +226,8 @@ class drawing:
         if old_brake < 0:
             old_brake = 0
 
-        self.braking = braking
-        self.old_braking = old_brake
+        self.brake = braking
+        self.old_brake = old_brake
 
         return
 
@@ -249,8 +236,9 @@ class drawing:
 class calculations:
     # Calculating avg line, saving avg X/Y positions
     def average_line(self, video, lines):
-        x = self.x + 425
-        y = self.y + 185
+        x = self.x + 267
+        y = self.y + 125
+
         # Changing x/y positions
         # x += 425
         # y += 185
@@ -291,9 +279,9 @@ class calculations:
 
         # Changing old positing if lines were not found
         else:
-            if x > 470:
+            if x > 317:
                 x -= 1
-            elif x < 380:
+            elif x < 217:
                 x += 1
 
         # Drawing average line
@@ -302,8 +290,8 @@ class calculations:
         cv2.line(video, (x - 10, 150), (x + 10, 150), (0, 255, 0), 5)
 
         # Changing points back to normal form
-        x -= 425
-        y -= 185
+        x -= 267
+        y -= 0
         # Making sure points stay in the right area
         if x > 200:
             x = 200
@@ -330,8 +318,9 @@ class calculations:
 
             # If speed is more than 100km/h, max pixels will be more than 770
             # Then speed is 2
-            if pixels > 770:
+            if pixels > 530:
                 v = 2
+
         self.v = v
 
         return
@@ -348,9 +337,9 @@ class calculations:
         else:
             slope = self.slope
 
-            # Max slope is 10
-            if slope > 10:
-                slope = 10
+        # Max slope is 10
+        if slope > 10:
+            slope = 10
 
         self.slope = slope
         return
