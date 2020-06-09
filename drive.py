@@ -195,6 +195,7 @@ class ai_drive:
         # Prediction y-axis
         y = ai_drive.model_gas(self, model_y, input)
 
+        # Sending inputs to controller
         ai_drive.controller(x, y)
 
         return
@@ -238,12 +239,11 @@ class ai_drive:
         prediction = model.predict(input)
 
         gas = np.sum(prediction[0:, :3])
-        brake = np.sum(prediction[0:, 4:])
+        if self.v != 1 and self.brake != 0:
+            brake = np.sum(prediction[0:, 4:])
+        else:
+            brake = 0
 
-        # if self.brake == 0 and self.old_brake == 0:
-        #     brake = 0
-        # else:
-        #     gas = 0
 
         y = brake - gas
         return y
@@ -252,12 +252,12 @@ class ai_drive:
     def controller(x, y):
 
         # turn
-        x = 16400 + (16400 * x)
+        x = 16400 + (8200 * x)
         x = int(x)
         vjoy.data.wAxisX = 0x0 + x
 
         # gas
-        y = 16400 + (16400 * y)
+        y = 16400 + (8200 * y)
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
 

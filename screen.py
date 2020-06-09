@@ -31,11 +31,11 @@ class screen:
 
         else:
             print("No video")
-            running = False
-            return running
+            return
 
         # Resizing the window
         video = cv2.resize(video, (535, 250))
+
         # Making copy of the window
         video_copy = np.copy(video)
 
@@ -110,16 +110,15 @@ class finding_lane:
         # Changing avg y-axis
         x = self.x
         y = self.y
-        v = self.v
-        v = 2
-        y = int(y/2-v**2*5)
-        if y > 30:
-            y = 30
+        v = self.v - 1
+        y = int((abs(y) + abs(x)) / 3 - v*10)
+        if y > 40:
+            y = 40
 
-        x = int(x / 3)
+        x = int(x /2)
 
         # Making area to analyze
-        polygons = np.array([[(252 + x, 40), (283 + x, 40), (288+x, y), (247+x, y)]])
+        polygons = np.array([[(247 + x, 40), (288 + x, 40), (281 + x, y), (254 + x, y)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
         # Masking video copy, aka making black screen

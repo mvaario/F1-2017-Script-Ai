@@ -12,15 +12,15 @@ win_name = "F1 Screen"
 dual_monitor = True
 width = 1920
 height = 1080
-running = False
+running = True
 
-wait_key = 10
+wait_key = 1
 display = True
 display_fps = False
 
 # AI setup
-ai = False
-record = True
+ai = True
+record = False
 sample_rate = 20
 save = False
 data_balance = False
@@ -30,7 +30,6 @@ pos_x = width / 2
 pos_y = height / 2
 
 class options:
-
     # Recording settings
     def ai_record():
 
@@ -66,19 +65,24 @@ class options:
 
     # SETUPS
     # Displaying video and FPS
-    def setups(last_time, video):
+    def setups(self, last_time, video):
         # Displaying
         if display:
             cv2.imshow(win_name, video)
             if ai and record:
+                # cv2.moveWindow(win_name, 1350, 40)
                 cv2.moveWindow(win_name, -880, 40)
             else:
-                cv2.moveWindow(win_name, 1055, 40)
+                cv2.moveWindow(win_name, 1350, 40)
                 # cv2.moveWindow(win_name, -880, 40)
 
-        # Printing fps, not settings wait_key
+        # Printing fps, note settings wait_key
         if display_fps:
-            print(round(1 / (time.time() - last_time)))
+            fps = round(1 / (time.time() - last_time))
+            if fps != self.fps:
+                print(fps)
+                self.fps = fps
+
             last_time = time.time()
 
         return last_time

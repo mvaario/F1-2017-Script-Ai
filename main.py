@@ -16,7 +16,6 @@ import cv2
 
 class main:
     def __init__(self):
-
         # x/y-axis average
         self.x = 0
         self.y = 0
@@ -32,6 +31,9 @@ class main:
 
         # speed
         self.v = 1
+
+        # fps
+        self.fps = 0
 
         return
 
@@ -84,12 +86,13 @@ class main:
                 ai_record.model_record(self, input_data, output_data_x, output_data_y)
             else:
                 ai_drive.model_drive(self, model_x, model_y)
-            pass
         else:
             script.start(self)
-
         return
 
+    def setups(self, last_time):
+        last_time = options.setups(self, last_time, video)
+        return last_time
 
 
 if __name__ == '__main__':
@@ -97,6 +100,7 @@ if __name__ == '__main__':
     main = main()
     last_time = time.time()
     check_key = key_check()
+
 
     if data_balance is True:
         main.data()
@@ -113,27 +117,28 @@ if __name__ == '__main__':
             print("")
 
         print("F to start")
-        while not running:
-            # if 'F' in key_check():
-                print("Running")
-                print("Q to break")
-                while True:
-                    check_key = key_check()
+        while True:
+            if not running:
+                if 'F' in key_check():
+                    running = True
+                    print("Running")
+                    print("Q to break")
+            while running:
+                check_key = key_check()
 
-                    # Start
-                    video, video_copy = main.analyse()
+                # Start
+                video, video_copy = main.analyse()
 
-                    main.control()
+                main.control()
+                # Setup
+                last_time = main.setups(last_time)
 
-                    # Setup
-                    last_time = options.setups(last_time, video)
-
-
-                    if cv2.waitKey(wait_key) & 0xFF == ord('q'):
-                        break
-                    if 'Q' in check_key:
-                        F = 0
-                        print("F to continue")
-                        break
-                cv2.destroyAllWindows()
-                vjoy.reset()
+                if cv2.waitKey(wait_key) & 0xFF == ord('q'):
+                    running = False
+                    break
+                if 'Q' in check_key:
+                    running = False
+                    print("F to continue")
+                    break
+            cv2.destroyAllWindows()
+            vjoy.reset()
