@@ -9,8 +9,9 @@
 
 from settings import *
 import cv2
-import numpy as np
 from grabscreen import grab_screen
+import numpy as np
+import cupy as cp
 
 
 class screen:
@@ -35,9 +36,8 @@ class screen:
 
         # Resizing the window
         video = cv2.resize(video, (535, 250))
-
         # Making copy of the window
-        video_copy = np.copy(video)
+        video_copy = cp.copy(video)
 
         return video, video_copy
 
@@ -72,6 +72,7 @@ class finding_lane:
 
         # Masking video copy, aka making black screen
         mask = np.zeros_like(video_copy)
+
         # Filling black screen with region
         cv2.fillPoly(mask, polygons, (255, 255, 255))
         # Fitting video on region

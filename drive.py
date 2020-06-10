@@ -5,12 +5,9 @@
 # - Sending AI predictions to joystick
 # made by mvaario
 
-
-
 import pyvjoy
 from main import *
 from settings import *
-
 
 vjoy = pyvjoy.VJoyDevice(1)
 
@@ -29,7 +26,6 @@ class script:
         x = self.x
         slope = self.slope * 2
         v = self.v
-
 
         ss = slope / 20 + v
         if ss == 0:
@@ -67,9 +63,9 @@ class script:
         # BRAKE
         c = script.brake(self)
         if c > 16400:
-            y = c
+            y = c - y*2
 
-        # print(y)
+
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
         return
@@ -78,11 +74,7 @@ class script:
     def brake(self):
         b = self.brake
         o_b = self.old_brake
-        c = 0
 
-        if b > 5:
-            b = 20
-            o_b = 20
         if b > 20:
             b = 20
         if o_b > 20:
@@ -92,7 +84,7 @@ class script:
         b = 0.05 * b * 8200
         o_b = 0.05 * o_b * 8200
 
-        c = 16400 + b + o_b
+        c = b + o_b + 16400
         return c
 
 # Recording inputs

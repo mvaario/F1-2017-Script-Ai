@@ -7,7 +7,6 @@
 # Added script to drive without Ai training (settings.py ai = False and ai_record = False)
 # made by mvaario
 
-from data_balance import *
 from drive import *
 from screen import *
 import time
@@ -27,7 +26,7 @@ class main:
         self.old_brake = 0
 
         # Aggression
-        self.ag = 20
+        self.ag = 100
 
         # speed
         self.v = 1
@@ -90,6 +89,7 @@ class main:
             script.start(self)
         return
 
+    # Setups
     def setups(self, last_time):
         last_time = options.setups(self, last_time, video)
         return last_time
@@ -100,7 +100,7 @@ if __name__ == '__main__':
     main = main()
     last_time = time.time()
     check_key = key_check()
-
+    vjoy.reset()
 
     if data_balance is True:
         main.data()
@@ -129,7 +129,9 @@ if __name__ == '__main__':
                 # Start
                 video, video_copy = main.analyse()
 
+                # Drive
                 main.control()
+
                 # Setup
                 last_time = main.setups(last_time)
 
