@@ -2,9 +2,9 @@
 # - Printing information
 # - Loading models
 
-import time
 import cv2
 import pygame
+import tensorflow as tf
 from tensorflow import keras
 
 clock = pygame.time.Clock()
@@ -19,6 +19,7 @@ running = True
 wait_key = 1
 display = True
 display_fps = True
+FPS = 30
 
 # AI setup
 ai = True
@@ -31,6 +32,10 @@ epochs = 10
 # Screen position
 pos_x = width / 2
 pos_y = height / 2
+
+# Checks / fixes
+tensorflow_check = False
+browser = True
 
 class options:
     # Recording settings
@@ -73,14 +78,35 @@ class options:
         if display:
             cv2.imshow(win_name, video)
             if ai and record:
-                # cv2.moveWindow(win_name, 1350, 40)
-                cv2.moveWindow(win_name, -880, 40)
+                cv2.moveWindow(win_name, 1350, 40)
+                # cv2.moveWindow(win_name, -880, 40)
             else:
                 cv2.moveWindow(win_name, 1350, 40)
                 # cv2.moveWindow(win_name, -880, 40)
 
         # Printing fps, note settings wait_key
         if display_fps:
-            clock.tick(30)
+            clock.tick(FPS)
             print(round(clock.get_fps(), 1))
+        return
+
+    # Tensorflow-gpu prints
+    def check():
+        if tensorflow_check:
+            print("Tensorflow version:", tf.__version__)
+            print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+            tf.debugging.set_log_device_placement(True)
+            sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
+
+            with tf.compat.v1.Session() as ses:
+                # Build a graph.
+                a = tf.constant(5.0)
+                b = tf.constant(6.0)
+                c = a * b
+
+                # Evaluate the tensor `c`.
+                print(ses.run(c))
+
+            with tf.compat.v1.Session() as sess:
+                devices = sess.list_devices()
         return

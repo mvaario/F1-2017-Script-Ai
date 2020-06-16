@@ -10,7 +10,6 @@
 from screen import *
 from drive import *
 from data_balance import *
-import time
 from getkeys import key_check
 import cv2
 
@@ -63,11 +62,11 @@ class main:
         # Y-axis balance (len, shape)
         input_y, output_y = balance.y_axis(input_y, output_y)
 
-        # model X-axis
-        training.model_x(input_x, output_x)
-
-        # model Y-axis
+        # Training model Y-axis
         training.model_y(input_y, output_y)
+
+        # Training model X-axis
+        training.model_x(input_x, output_x)
 
         print("Full data lenght", len(input))
         print("Turning data", len(input_x))
@@ -125,8 +124,6 @@ if __name__ == '__main__':
 
                 # Setup
                 options.setups(video)
-
-
 
                 if cv2.waitKey(wait_key) & 0xFF == ord('q'):
                     running = False

@@ -5,9 +5,12 @@
 # - Training model with balanced data, inputs / outputs
 # made by mvaario
 
+import webbrowser
 from settings import *
 from tensorflow import keras
 import numpy as np
+from time import time
+from tensorflow.python.keras.callbacks import TensorBoard
 
 # AI data balancing
 class balance:
@@ -178,14 +181,31 @@ class training:
             keras.layers.Dense(64, activation="relu"),
             keras.layers.Dense(7, activation="softmax"),
         ])
+
+        if browser:
+            tensorboard = TensorBoard(log_dir="logs\\{}".format(time()))
+
         model.compile(optimizer="adam",
                       loss="sparse_categorical_crossentropy",
                       metrics=["accuracy"]
                       )
 
+
+
         print("X axis Fitting")
-        model.fit(input_x, output_x, epochs=epochs)
+
+        if browser:
+            model.fit(input_x, output_x, epochs=epochs, callbacks=[tensorboard])
+        else:
+            model.fit(input_x, output_x, epochs=epochs)
         model.summary()
+
+        test_loss, test_acc = model.evaluate(input_x, output_x)
+        print("")
+        print("Test Accuracy:", round(test_acc, 2))
+        if browser:
+            webbrowser.open('http://localhost:6006/ ', new=1)
+            # for check terminal: "tensorboard --logdir=logs/
 
         if save is True:
             model.save("x_axis.h5")
@@ -200,6 +220,9 @@ class training:
             keras.layers.Dense(7, activation="softmax"),
         ])
 
+        if browser:
+            tensorboard = TensorBoard(log_dir="logs\\{}".format(time()))
+
         model.compile(optimizer="adam",
                       loss="sparse_categorical_crossentropy",
                       metrics=["accuracy"]
@@ -207,7 +230,10 @@ class training:
 
 
         print("Y axis Fitting")
-        model.fit(input_y, output_y, epochs=epochs)
+        if browser:
+            model.fit(input_y, output_y, epochs=epochs, callbacks=[tensorboard])
+        else:
+            model.fit(input_y, output_y, epochs=epochs)
         model.summary()
 
         if save is True:

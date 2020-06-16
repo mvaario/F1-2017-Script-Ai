@@ -20,8 +20,8 @@ class screen:
         if dual_monitor:
             # Checking ai from settings
             if ai and record:
-                # video = grab_screen(region=(-width, height, width + 1180, height + 349))
-                video = grab_screen(region=(425, 450, 1495, 950))
+                video = grab_screen(region=(-1495, 450, -425, 950))
+                # video = grab_screen(region=(425, 450, 1495, 950))
             else:
                 # video = grab_screen(region=(-1385, 440, -535, 720))
                 video = grab_screen(region=(-1495, 450, -425, 950))
