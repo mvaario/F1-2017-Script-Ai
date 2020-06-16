@@ -9,7 +9,6 @@ from settings import *
 from tensorflow import keras
 import numpy as np
 
-
 # AI data balancing
 class balance:
 
@@ -179,10 +178,13 @@ class training:
             keras.layers.Dense(64, activation="relu"),
             keras.layers.Dense(7, activation="softmax"),
         ])
-        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+        model.compile(optimizer="adam",
+                      loss="sparse_categorical_crossentropy",
+                      metrics=["accuracy"]
+                      )
 
         print("X axis Fitting")
-        model.fit(input_x, output_x, epochs=50)
+        model.fit(input_x, output_x, epochs=epochs)
         model.summary()
 
         if save is True:
@@ -198,10 +200,14 @@ class training:
             keras.layers.Dense(7, activation="softmax"),
         ])
 
-        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+        model.compile(optimizer="adam",
+                      loss="sparse_categorical_crossentropy",
+                      metrics=["accuracy"]
+                      )
+
 
         print("Y axis Fitting")
-        model.fit(input_y, output_y, epochs=50)
+        model.fit(input_y, output_y, epochs=epochs)
         model.summary()
 
         if save is True:

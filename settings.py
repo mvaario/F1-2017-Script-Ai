@@ -7,6 +7,8 @@ import cv2
 import pygame
 from tensorflow import keras
 
+clock = pygame.time.Clock()
+
 # Display settings
 win_name = "F1 Screen"
 dual_monitor = True
@@ -16,7 +18,7 @@ running = True
 
 wait_key = 1
 display = True
-display_fps = False
+display_fps = True
 
 # AI setup
 ai = True
@@ -24,6 +26,7 @@ record = False
 sample_rate = 20
 save = False
 data_balance = False
+epochs = 10
 
 # Screen position
 pos_x = width / 2
@@ -65,7 +68,7 @@ class options:
 
     # SETUPS
     # Displaying video and FPS
-    def setups(self, last_time, video):
+    def setups(video):
         # Displaying
         if display:
             cv2.imshow(win_name, video)
@@ -78,11 +81,6 @@ class options:
 
         # Printing fps, note settings wait_key
         if display_fps:
-            fps = round(1 / (time.time() - last_time))
-            if fps != self.fps:
-                print(fps)
-                self.fps = fps
-
-            last_time = time.time()
-
-        return last_time
+            clock.tick(30)
+            print(round(clock.get_fps(), 1))
+        return

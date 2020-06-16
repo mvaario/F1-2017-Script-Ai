@@ -11,8 +11,6 @@ from settings import *
 import cv2
 from grabscreen import grab_screen
 import numpy as np
-import cupy as cp
-
 
 class screen:
 
@@ -37,7 +35,7 @@ class screen:
         # Resizing the window
         video = cv2.resize(video, (535, 250))
         # Making copy of the window
-        video_copy = cp.copy(video)
+        video_copy = np.copy(video)
 
         return video, video_copy
 

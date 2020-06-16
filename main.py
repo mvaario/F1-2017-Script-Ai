@@ -7,8 +7,9 @@
 # Added script to drive without Ai training (settings.py ai = False and ai_record = False)
 # made by mvaario
 
-from drive import *
 from screen import *
+from drive import *
+from data_balance import *
 import time
 from getkeys import key_check
 import cv2
@@ -30,9 +31,6 @@ class main:
 
         # speed
         self.v = 1
-
-        # fps
-        self.fps = 0
 
         return
 
@@ -89,16 +87,9 @@ class main:
             script.start(self)
         return
 
-    # Setups
-    def setups(self, last_time):
-        last_time = options.setups(self, last_time, video)
-        return last_time
-
-
 if __name__ == '__main__':
     print("")
     main = main()
-    last_time = time.time()
     check_key = key_check()
     vjoy.reset()
 
@@ -133,7 +124,9 @@ if __name__ == '__main__':
                 main.control()
 
                 # Setup
-                last_time = main.setups(last_time)
+                options.setups(video)
+
+
 
                 if cv2.waitKey(wait_key) & 0xFF == ord('q'):
                     running = False
