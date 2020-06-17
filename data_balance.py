@@ -175,6 +175,10 @@ class training:
 
     # Fitting x-inputs and x-outputs
     def model_x(input_x, output_x):
+        if browser:
+            webbrowser.open('http://localhost:6006/ ', new=1)
+            # for check terminal: "tensorboard --logdir=logs/
+
 
         model = keras.Sequential([
             keras.layers.Flatten(input_shape=(2, 5)),
@@ -203,9 +207,6 @@ class training:
         test_loss, test_acc = model.evaluate(input_x, output_x)
         print("")
         print("Test Accuracy:", round(test_acc, 2))
-        if browser:
-            webbrowser.open('http://localhost:6006/ ', new=1)
-            # for check terminal: "tensorboard --logdir=logs/
 
         if save is True:
             model.save("x_axis.h5")

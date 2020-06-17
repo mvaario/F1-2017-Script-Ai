@@ -21,17 +21,19 @@ display = True
 display_fps = True
 FPS = 30
 
-# AI setup
+# AI settings
 ai = True
-record = False
+record = True
 sample_rate = 20
 save = False
-data_balance = False
-epochs = 10
+data_balance = True
+epochs = 2500
 
 # Screen position
-pos_x = width / 2
-pos_y = height / 2
+pos_x_min = int(width / 2 - 535)
+pos_x_max = int(width / 2 + 535)
+pos_y_min = int(height / 2 - 90)
+pos_y_max = int(height / 2 + 410)
 
 # Checks / fixes
 tensorflow_check = False

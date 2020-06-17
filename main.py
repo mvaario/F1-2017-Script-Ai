@@ -63,7 +63,7 @@ class main:
         input_y, output_y = balance.y_axis(input_y, output_y)
 
         # Training model Y-axis
-        training.model_y(input_y, output_y)
+        # training.model_y(input_y, output_y)
 
         # Training model X-axis
         training.model_x(input_x, output_x)
@@ -98,14 +98,12 @@ if __name__ == '__main__':
         if ai is True:
             if record is True:
                 input_data, output_data_x, output_data_y = options.ai_record()
-                print("")
             else:
                 model_x, model_y = options.ai_models()
-                print("")
         else:
             print("Script drive")
-            print("")
 
+        print("")
         print("F to start")
         while True:
             if not running:
