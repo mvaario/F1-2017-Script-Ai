@@ -5,6 +5,7 @@
 # - Training model with balanced data, inputs / outputs
 # made by mvaario
 
+import random
 import webbrowser
 from settings import *
 from tensorflow import keras
@@ -22,7 +23,7 @@ class balance:
         input_x, output_x = balance.shuffle(input_x, output_x)
 
         # Changing len
-        input_x, output_x = balance.axis_len(input_x, output_x)
+        # input_x, output_x = balance.axis_len(input_x, output_x)
 
         # Changin shape
         input_x = balance.input_shape(input_x)
@@ -44,9 +45,9 @@ class balance:
         input_y, output_y = balance.shuffle(input_y, output_y)
 
         # Changing len
-        input_y, output_y = balance.axis_len(input_y, output_y)
+        # input_y, output_y = balance.axis_len(input_y, output_y)
 
-        # Changin shape
+        # Changing shape
         input_y = balance.input_shape(input_y)
 
         # Output change
@@ -68,15 +69,6 @@ class balance:
 
         data = np.asarray(data)
         data = np.reshape(data, (-1, 2))
-
-        left = []
-        output_data = data[1, 1]
-        input_data = data[1, 0]
-        left.append([input_data, output_data])
-        input = left[0]
-        input = input[0]
-        output = left[0]
-        output = output[1]
 
         left = []
         right = []
@@ -145,6 +137,7 @@ class balance:
             output_final.append([move])
 
         output = np.asarray(output_final)
+
         return output
 
     # Changing input shape
@@ -152,9 +145,7 @@ class balance:
         x = []
         for i in range(len(input)):
             x.append([input[i], [0, 0, 0, 0, 0]])
-
-        data = np.asarray(x)
-        input = data
+        input = np.asarray(x)
 
         return input
 
@@ -173,70 +164,70 @@ class balance:
 # AI training
 class training:
 
-    # Fitting x-inputs and x-outputs
-    def model_x(input_x, output_x):
+    # Building X-axis model
+    def model_x(input_x):
+        model_x = keras.Sequential([
+            keras.layers.Flatten(input_shape=(2, 5)),
+            keras.layers.Dense(20, activation="relu"),
+            keras.layers.Dense(40, activation="relu"),
+            keras.layers.Dense(20, activation="relu"),
+            keras.layers.Dense(14, activation="relu"),
+            keras.layers.Dense(7, activation="softmax"),
+        ])
+
+        model_x.compile(optimizer="adam",
+                        loss="sparse_categorical_crossentropy",
+                        metrics=["accuracy"]
+                        )
+
+        return model_x
+
+    # Building Y-axis model
+    def model_y(input_y):
+        model_y = keras.Sequential([
+            keras.layers.Flatten(input_shape=(2, 5)),
+            keras.layers.Dense(20, activation="relu"),
+            keras.layers.Dense(40, activation="relu"),
+            keras.layers.Dense(20, activation="relu"),
+            keras.layers.Dense(14, activation="relu"),
+            keras.layers.Dense(7, activation="softmax"),
+        ])
+
+        model_y.compile(optimizer="adam",
+                        loss="sparse_categorical_crossentropy",
+                        metrics=["accuracy"]
+                        )
+        return model_y
+
+    # Fitting models
+    def model_fitting(model_x, model_y, input_x, input_y, output_x, output_y):
         if browser:
             webbrowser.open('http://localhost:6006/ ', new=1)
             # for check terminal: "tensorboard --logdir=logs/
-
-
-        model = keras.Sequential([
-            keras.layers.Flatten(input_shape=(2, 5)),
-            keras.layers.Dense(64, activation="relu"),
-            keras.layers.Dense(7, activation="softmax"),
-        ])
-
-        if browser:
             tensorboard = TensorBoard(log_dir="logs\\{}".format(time()))
 
-        model.compile(optimizer="adam",
-                      loss="sparse_categorical_crossentropy",
-                      metrics=["accuracy"]
-                      )
+            print("Fitting X-axis")
+            model_x.fit(input_x, output_x, epochs=epochs, callbacks=[tensorboard])
 
+            print("Fitting Y-axis")
+            model_y.fit(input_y, output_y, epochs=epochs, callbacks=[tensorboard])
 
-
-        print("X axis Fitting")
-
-        if browser:
-            model.fit(input_x, output_x, epochs=epochs, callbacks=[tensorboard])
         else:
-            model.fit(input_x, output_x, epochs=epochs)
-        model.summary()
+            print("Fitting X-axis")
+            model_x.fit(input_x, output_x, epochs=epochs)
+            print("------------------------------------------")
+            print("")
+            print("Fitting Y-axis")
+            model_y.fit(input_y, output_y, epochs=epochs)
 
-        test_loss, test_acc = model.evaluate(input_x, output_x)
+
+        print("model_x summary")
+        model_x.summary()
         print("")
-        print("Test Accuracy:", round(test_acc, 2))
+        print("model_y summary")
+        model_y.summary()
 
         if save is True:
-            model.save("x_axis.h5")
-        return model
-
-    # Fitting y-inputs and y-outputs
-    def model_y(input_y, output_y):
-
-        model = keras.Sequential([
-            keras.layers.Flatten(input_shape=(2, 5)),
-            keras.layers.Dense(64, activation="relu"),
-            keras.layers.Dense(7, activation="softmax"),
-        ])
-
-        if browser:
-            tensorboard = TensorBoard(log_dir="logs\\{}".format(time()))
-
-        model.compile(optimizer="adam",
-                      loss="sparse_categorical_crossentropy",
-                      metrics=["accuracy"]
-                      )
-
-
-        print("Y axis Fitting")
-        if browser:
-            model.fit(input_y, output_y, epochs=epochs, callbacks=[tensorboard])
-        else:
-            model.fit(input_y, output_y, epochs=epochs)
-        model.summary()
-
-        if save is True:
-            model.save("y_axis.h5")
+            model_x.save("x_axis.h5")
+            model_y.save("y_axis.h5")
         return

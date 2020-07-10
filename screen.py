@@ -23,7 +23,7 @@ class screen:
                 video = grab_screen(region=(-pos_x_max, pos_y_min, -pos_x_min, pos_y_max))
             else:
                 video = grab_screen(region=(-pos_x_max, pos_y_min, -pos_x_min, pos_y_max))
-            # Converting colors BGR to RGBf
+            # Converting colors BGR to RGB
             video = cv2.cvtColor(video, cv2.COLOR_BGR2RGB)
 
         else:
@@ -54,7 +54,7 @@ class finding_lane:
 
         return
 
-    # Best line region
+    # Best line area
     def turn_region(self, video, video_copy):
         x = self.x
         # Calculating x_down position
@@ -93,6 +93,7 @@ class finding_lane:
 
     # BRAKE
     def brake_start(self, video, video_copy):
+
         region = finding_lane.brake_region(self, video, video_copy)
 
         red_pixels = finding_lane.red_pixels(region)
@@ -101,8 +102,7 @@ class finding_lane:
 
         return
 
-    # Finding best line position
-
+    # Braking area
     def brake_region(self, video, video_copy):
         # Changing avg y-axis
         x = self.x
@@ -145,6 +145,7 @@ class finding_lane:
 
     # SPEED
     def speed_start(self, video, video_copy):
+        # Checking if speed is over 100 km/h
         region = finding_lane.speed_region(self, video, video_copy)
         calculations.white_pixels(self, region)
 
@@ -152,8 +153,6 @@ class finding_lane:
 
     # Speedo meter region
     def speed_region(self, video, video_copy):
-
-
         polygons = np.array([[(510, 250), (535, 250), (535, 230), (510, 230)]])
         # alavasen, alaoikea, yläoikea, keskiylääoikei,  keskiylävasen ,ylävasen
 
@@ -170,7 +169,7 @@ class drawing:
 
     # Drawing turning lines
     def bestline(video, green_pixels):
-        # Blur and canny  image
+        # Blur and canny image
         blur = cv2.GaussianBlur(green_pixels, (5, 5), 0)
         canny = cv2.Canny(blur, 0, 0)
         # Finding lines using green pixels
@@ -216,7 +215,7 @@ class drawing:
         if braking != 0:
             old_brake = braking
 
-        # Making sure brakings cant't be negative
+        # Making sure braking cant't be negative
         if braking < 0:
             braking = 0
         if old_brake < 0:

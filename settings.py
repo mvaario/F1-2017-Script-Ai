@@ -18,16 +18,16 @@ running = True
 
 wait_key = 1
 display = True
-display_fps = True
-FPS = 30
+display_fps = False
+FPS = 50
 
 # AI settings
-ai = True
-record = True
-sample_rate = 20
+ai = False
+record = False
+sample_rate = 100
 save = False
-data_balance = True
-epochs = 2500
+training = True
+epochs = 100
 
 # Screen position
 pos_x_min = int(width / 2 - 535)
@@ -53,7 +53,7 @@ class options:
         # Prints the joystick's name
         JoyName = pygame.joystick.Joystick(0).get_name()
         print("Recording device:", JoyName)
-        print("Saple rate", sample_rate)
+        print("Sample rate", sample_rate)
 
         # input data all
         input_data = []

@@ -13,6 +13,7 @@ from data_balance import *
 from getkeys import key_check
 import cv2
 
+
 class main:
     def __init__(self):
         # x/y-axis average
@@ -20,20 +21,16 @@ class main:
         self.y = 0
         self.slope = 0
 
-
         # Braking
         self.brake = 0
         self.old_brake = 0
-
-        # Aggression
-        self.ag = 100
 
         # speed
         self.v = 1
 
         return
 
-    # Start / Recording game window
+    # Screen analysing
     def analyse(self):
         video, video_copy = screen.record()
 
@@ -53,24 +50,25 @@ class main:
         # output_x = loading recorded inputs (gas, brake)
         output_y = np.load('output_y.npy', allow_pickle=True)
 
-        input_x = input
-        input_y = input
-
         # X-axis balance (len, shape)
-        input_x, output_x = balance.x_axis(input_x, output_x)
+        input_x, output_x = balance.x_axis(input, output_x)
 
         # Y-axis balance (len, shape)
-        input_y, output_y = balance.y_axis(input_y, output_y)
+        input_y, output_y = balance.y_axis(input, output_y)
 
-        # Training model Y-axis
-        # training.model_y(input_y, output_y)
+        # Building X-axis model
+        model_x = training.model_x(input)
 
-        # Training model X-axis
-        training.model_x(input_x, output_x)
+        # Building Y-axis model
+        model_y = training.model_y(input)
 
-        print("Full data lenght", len(input))
-        print("Turning data", len(input_x))
-        print("Straight data", len(input_y))
+        # Training models
+        training.model_fitting(model_x, model_y, input_x, input_y, output_x, output_y)
+
+        print("")
+        print("Full data length:", len(input))
+        print("Turning data:", len(input_x))
+        print("Straight data:", len(input_y))
 
         return
 
@@ -86,13 +84,14 @@ class main:
             script.start(self)
         return
 
+
 if __name__ == '__main__':
     print("")
     main = main()
     check_key = key_check()
     vjoy.reset()
 
-    if data_balance is True:
+    if training:
         main.data()
     else:
         if ai is True:
