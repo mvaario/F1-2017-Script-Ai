@@ -14,53 +14,63 @@ win_name = "F1 Screen"
 dual_monitor = True
 width = 1920
 height = 1080
-running = True
+running = False
 
 wait_key = 1
 display = True
 display_fps = False
-FPS = 50
+FPS = 10
+joynum = 1
 
 # AI settings
-ai = False
-record = False
-sample_rate = 100
+ai = True
+record = True
+sample_rate = 200
 save = False
-training = True
-epochs = 100
+data_balance = False
+epochs = 1
 
 # Screen position
 pos_x_min = int(width / 2 - 535)
 pos_x_max = int(width / 2 + 535)
-pos_y_min = int(height / 2 - 90)
+pos_y_min = int(height / 2 - 80)
 pos_y_max = int(height / 2 + 410)
+
+# Resize
+r = 0.2
+size_x = int((pos_x_max - pos_x_min) * r)
+size_y = int((pos_y_max - pos_y_min) * r)
 
 # Checks / fixes
 tensorflow_check = False
-browser = True
+browser = False
 
 class options:
     # Recording settings
     def ai_record():
+        try:
+            # Printing recording device
+            print("Recording inputs")
+            pygame.display.init()
+            pygame.joystick.init()
+            pygame.joystick.Joystick(joynum).init()
 
-        print("AI is True")
-        # Printing recording device
-        print("Recording inputs")
-        pygame.display.init()
-        pygame.joystick.init()
-        pygame.joystick.Joystick(0).init()
+            # Prints the joystick's name
+            JoyName = pygame.joystick.Joystick(joynum).get_name()
+            print("Recording device:", JoyName)
+            print("Sample rate:", sample_rate)
+            print("Save:", save)
 
-        # Prints the joystick's name
-        JoyName = pygame.joystick.Joystick(0).get_name()
-        print("Recording device:", JoyName)
-        print("Sample rate", sample_rate)
-
-        # input data all
-        input_data = []
-        # turn
-        output_data_x = []
-        # gas / brake
-        output_data_y = []
+            # input data all
+            input_data = []
+            # turn
+            output_data_x = []
+            # gas / brake
+            output_data_y = []
+        except:
+            print("No joystick found", joynum)
+            print("Change joy number")
+            quit()
 
         return input_data, output_data_x, output_data_y
 
@@ -68,7 +78,7 @@ class options:
     def ai_models():
         model_x = keras.models.load_model("x_axis.h5")
         model_y = keras.models.load_model("y_axis.h5")
-        print("AI is True")
+        print("AI:", ai)
         print("Loading models")
 
         return model_x, model_y
@@ -83,7 +93,7 @@ class options:
                 cv2.moveWindow(win_name, 1350, 40)
                 # cv2.moveWindow(win_name, -880, 40)
             else:
-                cv2.moveWindow(win_name, 1350, 40)
+                cv2.moveWindow(win_name, -1050, 40)
                 # cv2.moveWindow(win_name, -880, 40)
 
         # Printing fps, note settings wait_key

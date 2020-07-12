@@ -28,6 +28,14 @@ class main:
         # speed
         self.v = 1
 
+        # side lines
+        self.side = 0
+
+
+        # old line
+        self.line = [5, 5, 5, 5, 5]
+
+
         return
 
     # Screen analysing
@@ -37,11 +45,13 @@ class main:
         finding_lane.turn_start(self, video, video_copy)
         finding_lane.brake_start(self, video, video_copy)
         finding_lane.speed_start(self, video, video_copy)
+        finding_lane.side_track(self, video, video_copy)
 
         return video, video_copy
 
     # Data balance
     def data(self):
+        print("Data balance")
 
         # input = loading input data ([x, slope, brake, old_brake, v])
         input = np.load('input_data.npy', allow_pickle=True)
@@ -51,10 +61,10 @@ class main:
         output_y = np.load('output_y.npy', allow_pickle=True)
 
         # X-axis balance (len, shape)
-        input_x, output_x = balance.x_axis(input, output_x)
+        input_x, output_x, input_x_test, output_x_test = balance.x_axis(input, output_x)
 
         # Y-axis balance (len, shape)
-        input_y, output_y = balance.y_axis(input, output_y)
+        input_y, output_y, input_y_test, output_y_test = balance.y_axis(input, output_y)
 
         # Building X-axis model
         model_x = training.model_x(input)
@@ -63,12 +73,24 @@ class main:
         model_y = training.model_y(input)
 
         # Training models
-        training.model_fitting(model_x, model_y, input_x, input_y, output_x, output_y)
+        training.model_fitting(model_x, model_y,
+                               input_x, input_y,
+                               output_x, output_y
+                               )
 
         print("")
         print("Full data length:", len(input))
         print("Turning data:", len(input_x))
         print("Straight data:", len(input_y))
+
+
+        # Testing models
+        training.model_testing(model_x, model_y,
+                               input_x_test, output_x_test,
+                               input_y_test, output_y_test
+                               )
+
+
 
         return
 
@@ -91,7 +113,7 @@ if __name__ == '__main__':
     check_key = key_check()
     vjoy.reset()
 
-    if training:
+    if data_balance is True:
         main.data()
     else:
         if ai is True:
@@ -101,7 +123,6 @@ if __name__ == '__main__':
                 model_x, model_y = options.ai_models()
         else:
             print("Script drive")
-
         print("")
         print("F to start")
         while True:

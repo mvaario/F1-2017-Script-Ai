@@ -18,15 +18,17 @@ class balance:
 
     # X axis balance and shuffle
     def x_axis(input_x, output_x):
-
         # shuffle
         input_x, output_x = balance.shuffle(input_x, output_x)
+
+        # Making testing data
+        input_x_test, output_x_test = balance.testing_data(input_x, output_x)
 
         # Changing len
         # input_x, output_x = balance.axis_len(input_x, output_x)
 
         # Changin shape
-        input_x = balance.input_shape(input_x)
+        # input_x = balance.input_shape(input_x)
 
         # Output change
         output_x = balance.output_change(output_x)
@@ -36,7 +38,7 @@ class balance:
 
         output_x = output_x.reshape(-1)
 
-        return input_x, output_x
+        return input_x, output_x, input_x_test, output_x_test
 
     # Y axis balance and shuffle
     def y_axis(input_y, output_y):
@@ -44,11 +46,14 @@ class balance:
         # shuffle
         input_y, output_y = balance.shuffle(input_y, output_y)
 
+        # Making testing data
+        input_y_test, output_y_test = balance.testing_data(input_y, output_y)
+
         # Changing len
         # input_y, output_y = balance.axis_len(input_y, output_y)
 
         # Changing shape
-        input_y = balance.input_shape(input_y)
+        # input_y = balance.input_shape(input_y)
 
         # Output change
         output_y = balance.output_change(output_y)
@@ -58,24 +63,38 @@ class balance:
 
         output_y = output_y.reshape(-1)
 
-        return input_y, output_y
+        return input_y, output_y, input_y_test, output_y_test
+
+    # Making testing data
+    def testing_data(input, output):
+        input_test = []
+        output_test = []
+        for i in range(100):
+            num = random.randint(1, len(input))
+            input_test.append(input[num])
+            output_test.append(output[num])
+
+        input_test = np.asarray(input_test)
+        output_test = np.asarray(output_test)
+
+        return input_test, output_test
 
     # Changing data lens
     def axis_len(input, output):
-
         data = []
         for i in range(len(input)):
             data.append([input[i], output[i]])
 
         data = np.asarray(data)
-        data = np.reshape(data, (-1, 2))
 
         left = []
         right = []
         straight = []
         for i in range(len(data)):
-            output_data = data[i, 1]
-            input_data = data[i, 0]
+            row = data[i]
+            input_data = row[0]
+            output_data = row[1]
+
 
             if output_data[0] != 0:
                 left.append([input_data, output_data])
@@ -109,7 +128,7 @@ class balance:
 
         input = np.asarray(input_final)
         output = np.asarray(output_final)
-        input = input.reshape(-1, 5)
+        input = input.reshape(-1, 2, 5)
         output = output.reshape(-1, 3)
 
         return input, output
@@ -152,7 +171,6 @@ class balance:
     # Shuffle data
     def shuffle(input, output):
         # Shuffle data
-
         indices = np.arange(input.shape[0])
         np.random.shuffle(indices)
         input = input[indices]
@@ -220,7 +238,6 @@ class training:
             print("Fitting Y-axis")
             model_y.fit(input_y, output_y, epochs=epochs)
 
-
         print("model_x summary")
         model_x.summary()
         print("")
@@ -230,4 +247,36 @@ class training:
         if save is True:
             model_x.save("x_axis.h5")
             model_y.save("y_axis.h5")
+        return
+
+    # Testing models
+    def model_testing(model_x, model_y, input_x_test, output_x_test, input_y_test, output_y_test):
+        x = model_x.predict(input_x_test)
+        y = model_y.predict(input_y_test)
+
+        miss_x = 0
+        miss_y = 0
+        for i in range(len(input_x_test)):
+            x1 = np.argmax(x[i])
+            x2 = np.argmax(output_x_test[i])
+            if x1 != x2:
+                miss_x = miss_x + 1
+
+        for i in range(len(input_y_test)):
+            y1 = np.argmax(y[i])
+            y2 = np.argmax(output_y_test[i])
+            if y1 != y2:
+                miss_y = miss_y + 1
+
+        print("--------------------")
+        print("x-axis accurate:", round(1 - miss_x / len(input_x_test), 4))
+        print("y-axis accurate:", round(1 - miss_y / len(input_y_test), 5))
+        print("")
+        print("Examples:")
+        for i in range(5):
+            num = random.randint(1, len(input_x_test))
+            print("Prediction:", np.argmax(x[num]), "Actual:", np.argmax(output_x_test[num]))
+
+
+
         return

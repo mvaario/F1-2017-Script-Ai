@@ -97,10 +97,12 @@ class ai_record:
         v = self.v
         b = self.brake
         o_b = self.old_brake
+        line = self.line
 
-        input_data_x = []
         # Recording inputs
-        input_data.append([x, slope, b, o_b, v])
+        input_data.append([[x, slope, b, o_b, v], line])
+        self.line = [x, slope, b, o_b, v]
+        # input_data = np.asarray(input_data)
 
         # Recording x-axis
         left, straight, right = ai_record.x_position()
@@ -111,21 +113,20 @@ class ai_record:
         output_data_y.append([gas, zero, brake])
 
         # Saving data
-        if len(input_data) % sample_rate == 0:
+        if save is True and len(input_data) % sample_rate == 0:
+            print("Saved frames", len(input_data))
+            np.save("input_data", input_data)
+            np.save("output_x", output_data_x)
+            np.save("output_y", output_data_y)
+        elif len(input_data) % sample_rate == 0:
             print("Frames", len(input_data))
-
-            if save is True:
-                np.save("input_data", input_data)
-                np.save("output_x", output_data_x)
-                np.save("output_y", output_data_y)
-
         return
 
     # Getting X-axis info (Turing keys)
     def x_position():
 
         # Prints the values for axis0-4
-        axis = float(pygame.joystick.Joystick(0).get_axis(0))
+        axis = float(pygame.joystick.Joystick(joynum).get_axis(4))
         left = 0
         straight = 0
         right = 0
@@ -135,11 +136,13 @@ class ai_record:
         elif axis < -0.005:
             if axis < -0.99:
                 left = 1
+                # print("LEFT")
             else:
                 left = abs(axis)
         elif axis > 0.005:
             if axis > 0.99:
                 right = 1
+                # print("RIGHT")
             else:
                 right = axis
         else:
@@ -151,25 +154,44 @@ class ai_record:
     def y_position():
         # Values for axis0-4
         # Gas 1 to -1
-        gas = float(pygame.joystick.Joystick(0).get_axis(2))
-        gas = (gas - 1) / -2
+        y = float(pygame.joystick.Joystick(joynum).get_axis(1))
+        brake = 0
+        gas = 0
+        zero = 0
+        if -0.005 < y < 0.005:
+            zero = 1
+        elif y < -0.005:
+            if y < -0.99:
+                gas = 1
+                # print("GAS")
+            else:
+                gas = abs(y)
+        elif y > 0.005:
+            if y > 0.99:
+                brake = 1
+                # print("BREAKE")
+            else:
+                brake = y
 
-        if gas > 0.99:
-            gas = 1
-        if gas < 0.005:
-            gas = 0
+
+        # gas = (gas - 1) / -2
+        #
+        # if gas > 0.99:
+        #     gas = 1
+        # if gas < 0.005:
+        #     gas = 0
 
         # Braking
-        brake = float(pygame.joystick.Joystick(0).get_axis(3))
-        brake = (1 - brake) / 2
-        if brake > 0.99:
-            brake = 1
-        if brake < 0.005:
-            brake = 0
-        if gas == 0 and brake == 0:
-            zero = 1
-        else:
-            zero = 0
+        # brake = float(pygame.joystick.Joystick(joynum).get_axis(1))
+        # brake = (1 - brake) / 2
+        # if brake > 0.99:
+        #     brake = 1
+        # if brake < 0.005:
+        #     brake = 0
+        # if gas == 0 and brake == 0:
+        #     zero = 1
+        # else:
+        #     zero = 0
 
         return gas, zero, brake
 
