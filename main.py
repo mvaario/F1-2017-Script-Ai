@@ -13,7 +13,6 @@ from data_balance import *
 from getkeys import key_check
 import cv2
 
-
 class main:
     def __init__(self):
         # x/y-axis average
@@ -33,7 +32,7 @@ class main:
 
 
         # old line
-        self.line = [5, 5, 5, 5, 5]
+        self.line = [0,0,0,0,0,0]
 
 
         return
@@ -113,7 +112,9 @@ if __name__ == '__main__':
     check_key = key_check()
     vjoy.reset()
 
-    if data_balance is True:
+    if tensorflow_check:
+        options.check()
+    elif data_balance is True:
         main.data()
     else:
         if ai is True:

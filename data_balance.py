@@ -13,6 +13,7 @@ import numpy as np
 from time import time
 from tensorflow.python.keras.callbacks import TensorBoard
 
+
 # AI data balancing
 class balance:
 
@@ -27,16 +28,18 @@ class balance:
         # Changing len
         # input_x, output_x = balance.axis_len(input_x, output_x)
 
-        # Changin shape
+        # Changin shape ( not needed)
         # input_x = balance.input_shape(input_x)
 
         # Output change
         output_x = balance.output_change(output_x)
+        output_x_test = balance.output_change(output_x_test)
 
         # shuffle
         input_x, output_x = balance.shuffle(input_x, output_x)
 
         output_x = output_x.reshape(-1)
+        output_x_test = output_x_test.reshape(-1)
 
         return input_x, output_x, input_x_test, output_x_test
 
@@ -57,11 +60,13 @@ class balance:
 
         # Output change
         output_y = balance.output_change(output_y)
+        output_y_test = balance.output_change(output_y_test)
 
         # Shuffle
         input_y, output_y = balance.shuffle(input_y, output_y)
 
         output_y = output_y.reshape(-1)
+        output_y_test = output_y_test.reshape(-1)
 
         return input_y, output_y, input_y_test, output_y_test
 
@@ -69,7 +74,7 @@ class balance:
     def testing_data(input, output):
         input_test = []
         output_test = []
-        for i in range(100):
+        for i in range(test_size):
             num = random.randint(1, len(input))
             input_test.append(input[num])
             output_test.append(output[num])
@@ -94,7 +99,6 @@ class balance:
             row = data[i]
             input_data = row[0]
             output_data = row[1]
-
 
             if output_data[0] != 0:
                 left.append([input_data, output_data])
@@ -274,9 +278,7 @@ class training:
         print("")
         print("Examples:")
         for i in range(5):
-            num = random.randint(1, len(input_x_test))
+            num = random.randint(1, len(input_x_test)-1)
             print("Prediction:", np.argmax(x[num]), "Actual:", np.argmax(output_x_test[num]))
-
-
 
         return

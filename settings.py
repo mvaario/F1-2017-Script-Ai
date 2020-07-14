@@ -14,13 +14,13 @@ win_name = "F1 Screen"
 dual_monitor = True
 width = 1920
 height = 1080
-running = False
+running = True
 
 wait_key = 1
 display = True
 display_fps = False
-FPS = 10
-joynum = 1
+FPS = 60
+joynum = 0
 
 # AI settings
 ai = True
@@ -28,7 +28,8 @@ record = True
 sample_rate = 200
 save = False
 data_balance = False
-epochs = 1
+epochs = 10
+test_size = 100
 
 # Screen position
 pos_x_min = int(width / 2 - 535)
@@ -37,9 +38,9 @@ pos_y_min = int(height / 2 - 80)
 pos_y_max = int(height / 2 + 410)
 
 # Resize
-r = 0.2
-size_x = int((pos_x_max - pos_x_min) * r)
-size_y = int((pos_y_max - pos_y_min) * r)
+k = 0.5
+size_x = int((pos_x_max - pos_x_min) * k)
+size_y = int((pos_y_max - pos_y_min) * k)
 
 # Checks / fixes
 tensorflow_check = False
@@ -90,15 +91,13 @@ class options:
         if display:
             cv2.imshow(win_name, video)
             if ai and record:
-                cv2.moveWindow(win_name, 1350, 40)
-                # cv2.moveWindow(win_name, -880, 40)
+                cv2.moveWindow(win_name, int(width-size_x), 40)
             else:
-                cv2.moveWindow(win_name, -1050, 40)
-                # cv2.moveWindow(win_name, -880, 40)
+                cv2.moveWindow(win_name, int(width-size_x), 40)
 
         # Printing fps, note settings wait_key
+        clock.tick(FPS)
         if display_fps:
-            clock.tick(FPS)
             print(round(clock.get_fps(), 1))
         return
 

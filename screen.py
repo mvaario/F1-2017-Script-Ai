@@ -6,12 +6,10 @@
 # - Drawing lines
 # made by mvaario
 
-
 from settings import *
 import cv2
 from grabscreen import grab_screen
 import numpy as np
-
 
 class screen:
 
@@ -113,13 +111,13 @@ class finding_lane:
     # Braking area
     def brake_region(self, video, video_copy):
         # Changing avg y-axis
-        x = abs(self.x) / 3
+        x = self.x / 1.2
         slope = self.slope / 2
         v = (self.v - 1) * 10
         side = self.side
 
-        x = int((x / 1.2) + side)
-        y = int(x - v - slope + size_y * 0.31)
+        x = int((x) + side)
+        y = int(abs(x/2) - v - slope + 20)
 
         if y > int(size_y * 0.16327):
             y = int(size_y * 0.16327)
@@ -186,7 +184,6 @@ class finding_lane:
         region = finding_lane.side_track_region(self, video, video_copy)
         green_pixels = finding_lane.green_pixels(region)
         calculations.side_line(self, green_pixels)
-
         return
 
     # Side track region
@@ -288,6 +285,8 @@ class drawing:
 
         # Changing old braking to equal to new brake
         if braking != 0:
+            if braking > 10:
+                braking = 10
             old_brake = braking
 
         # Making sure braking cant't be negative
@@ -368,6 +367,7 @@ class calculations:
         self.x = x
         self.y = y
 
+
         return
 
     # Calculating speed
@@ -396,9 +396,12 @@ class calculations:
         x = abs(self.x)
         y = abs(self.y)
 
+
         # Calculating slope
         if y != 0 and x != 0:
             slope = y / x * 2
+            # print(x)
+            # print(slope)
         else:
             slope = self.slope - 1
             if slope < 0:
@@ -422,6 +425,8 @@ class calculations:
         if pixels.size != 0:
             pixels = pixels[0]
             pixels = pixels[1]
+            # print(pixels)
+
             if pixels < int(size_x*0.45608) and self.x <= 0:
                 pixel_left = np.amax(pixels)
                 pixel_left = pixel_left
@@ -429,7 +434,7 @@ class calculations:
                 pixel_right = np.amin(pixels)
                 pixel_right = abs(pixel_right - size_x)
             if pixel_right != 0 or pixel_left != 0:
-                self.side = (pixel_left - pixel_right) / 10
+                self.side = (pixel_left - pixel_right) / 12
         else:
             if self.side < -0.5:
                 self.side += 0.5

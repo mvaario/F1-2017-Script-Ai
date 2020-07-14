@@ -92,17 +92,17 @@ class ai_record:
     def model_record(self, input_data, output_data_x, output_data_y):
         pygame.event.pump()
 
-        x = self.x
-        slope = self.slope
-        v = self.v
-        b = self.brake
-        o_b = self.old_brake
+        x = self.x / (size_x*0.37383)
+        slope = self.slope / 20
+        v = self.v / 2
+        b = self.brake / 10
+        o_b = self.old_brake / 10
+        side = self.side / (size_x*0.0374)
         line = self.line
 
         # Recording inputs
-        input_data.append([[x, slope, b, o_b, v], line])
-        self.line = [x, slope, b, o_b, v]
-        # input_data = np.asarray(input_data)
+        input_data.append([[x, slope, b, o_b, side, v], line])
+        self.line = [x, slope, b, o_b, side, v]
 
         # Recording x-axis
         left, straight, right = ai_record.x_position()
