@@ -126,23 +126,21 @@ class ai_record:
     def x_position():
 
         # Prints the values for axis0-4
-        axis = float(pygame.joystick.Joystick(joynum).get_axis(4))
+        axis = float(pygame.joystick.Joystick(joynum).get_axis(0))
         left = 0
         straight = 0
         right = 0
 
-        if -0.005 < axis < 0.005:
+        if -0.008 < axis < 0.008:
             straight = 1
-        elif axis < -0.005:
+        elif axis < -0.008:
             if axis < -0.99:
                 left = 1
-                # print("LEFT")
             else:
                 left = abs(axis)
-        elif axis > 0.005:
+        elif axis > 0.008:
             if axis > 0.99:
                 right = 1
-                # print("RIGHT")
             else:
                 right = axis
         else:
@@ -155,6 +153,7 @@ class ai_record:
         # Values for axis0-4
         # Gas 1 to -1
         y = float(pygame.joystick.Joystick(joynum).get_axis(1))
+
         brake = 0
         gas = 0
         zero = 0
@@ -163,35 +162,14 @@ class ai_record:
         elif y < -0.005:
             if y < -0.99:
                 gas = 1
-                # print("GAS")
             else:
                 gas = abs(y)
+
         elif y > 0.005:
             if y > 0.99:
                 brake = 1
-                # print("BREAKE")
             else:
                 brake = y
-
-
-        # gas = (gas - 1) / -2
-        #
-        # if gas > 0.99:
-        #     gas = 1
-        # if gas < 0.005:
-        #     gas = 0
-
-        # Braking
-        # brake = float(pygame.joystick.Joystick(joynum).get_axis(1))
-        # brake = (1 - brake) / 2
-        # if brake > 0.99:
-        #     brake = 1
-        # if brake < 0.005:
-        #     brake = 0
-        # if gas == 0 and brake == 0:
-        #     zero = 1
-        # else:
-        #     zero = 0
 
         return gas, zero, brake
 
@@ -199,8 +177,8 @@ class ai_drive:
     # Driving with trained model
     def model_drive(self, model_x, model_y):
 
-        # Input shape change
-        input = ai_drive.input_shape(self)
+        # Input shape change (NOT needed?)
+        # input = ai_drive.input_shape(self)
 
 
         # Prediction

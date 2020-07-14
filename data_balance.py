@@ -55,7 +55,7 @@ class balance:
         # Changing len
         # input_y, output_y = balance.axis_len(input_y, output_y)
 
-        # Changing shape
+        # Changing shape (NOT NEEDED)
         # input_y = balance.input_shape(input_y)
 
         # Output change
@@ -75,7 +75,7 @@ class balance:
         input_test = []
         output_test = []
         for i in range(test_size):
-            num = random.randint(1, len(input))
+            num = random.randint(1, len(input)-1)
             input_test.append(input[num])
             output_test.append(output[num])
 
@@ -137,27 +137,50 @@ class balance:
 
         return input, output
 
-    # Changing output data from [x, 3] to [x, 7]
+    # Changing output data
     def output_change(output):
         output_final = []
         for i in range(len(output)):
             output_data = output[i]
 
-            if output_data[0] > 0.666:
-                move = 0
-            elif output_data[0] > 0.333:
-                move = 1
-            elif output_data[0] > 0:
-                move = 2
-            elif output_data[2] > 0.666:
-                move = 4
-            elif output_data[2] > 0.333:
-                move = 5
+            if output_data[0] > 0:
+                data = output_data[0]
+                if data > 0.8:
+                    move = 5
+                elif data > 0.6:
+                    move = 4
+                elif data > 0.4:
+                    move = 3
+                elif data > 0.2:
+                    move = 2
+                else:
+                    move = 1
+
             elif output_data[2] > 0:
-                move = 6
+                data = output_data[2]
+                if data > 0.8:
+                    move = 10
+                elif data > 0.6:
+                    move = 9
+                elif data > 0.4:
+                    move = 8
+                elif data > 0.2:
+                    move = 7
+                else:
+                    move = 6
+
+            elif output_data[1] > 0:
+                move = 0
+
+
             else:
-                move = 3
+                print("error", output[i])
+                print("line", i)
+                quit()
+
+
             output_final.append([move])
+
 
         output = np.asarray(output_final)
 
@@ -189,7 +212,7 @@ class training:
     # Building X-axis model
     def model_x(input_x):
         model_x = keras.Sequential([
-            keras.layers.Flatten(input_shape=(2, 5)),
+            keras.layers.Flatten(input_shape=(2, 6)),
             keras.layers.Dense(20, activation="relu"),
             keras.layers.Dense(40, activation="relu"),
             keras.layers.Dense(20, activation="relu"),
@@ -207,7 +230,7 @@ class training:
     # Building Y-axis model
     def model_y(input_y):
         model_y = keras.Sequential([
-            keras.layers.Flatten(input_shape=(2, 5)),
+            keras.layers.Flatten(input_shape=(2, 6)),
             keras.layers.Dense(20, activation="relu"),
             keras.layers.Dense(40, activation="relu"),
             keras.layers.Dense(20, activation="relu"),

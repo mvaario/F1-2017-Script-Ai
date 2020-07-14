@@ -19,7 +19,7 @@ class screen:
         if dual_monitor:
             # Checking ai from settings
             if ai and record:
-                video = grab_screen(region=(-pos_x_max, pos_y_min, -pos_x_min, pos_y_max))
+                video = grab_screen(region=(pos_x_min, pos_y_min, pos_x_max, pos_y_max))
             else:
                 video = grab_screen(region=(-pos_x_max, pos_y_min, -pos_x_min, pos_y_max))
             # Converting colors BGR to RGB

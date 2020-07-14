@@ -14,20 +14,20 @@ win_name = "F1 Screen"
 dual_monitor = True
 width = 1920
 height = 1080
-running = True
+running = False
 
 wait_key = 1
 display = True
 display_fps = False
 FPS = 60
-joynum = 0
+joynum = 1
 
 # AI settings
 ai = True
 record = True
 sample_rate = 200
 save = False
-data_balance = False
+data_balance = True
 epochs = 10
 test_size = 100
 
@@ -91,7 +91,7 @@ class options:
         if display:
             cv2.imshow(win_name, video)
             if ai and record:
-                cv2.moveWindow(win_name, int(width-size_x), 40)
+                cv2.moveWindow(win_name, int(-width), 40)
             else:
                 cv2.moveWindow(win_name, int(width-size_x), 40)
 
