@@ -28,9 +28,6 @@ class balance:
         # Changing len
         # input_x, output_x = balance.axis_len(input_x, output_x)
 
-        # Changin shape ( not needed)
-        # input_x = balance.input_shape(input_x)
-
         # Output change
         output_x = balance.output_change(output_x)
         output_x_test = balance.output_change(output_x_test)
@@ -54,9 +51,6 @@ class balance:
 
         # Changing len
         # input_y, output_y = balance.axis_len(input_y, output_y)
-
-        # Changing shape (NOT NEEDED)
-        # input_y = balance.input_shape(input_y)
 
         # Output change
         output_y = balance.output_change(output_y)
@@ -132,7 +126,8 @@ class balance:
 
         input = np.asarray(input_final)
         output = np.asarray(output_final)
-        input = input.reshape(-1, 2, 5)
+
+        input = input.reshape(-1, 2, 6)
         output = output.reshape(-1, 3)
 
         return input, output
@@ -186,15 +181,6 @@ class balance:
 
         return output
 
-    # Changing input shape
-    def input_shape(input):
-        x = []
-        for i in range(len(input)):
-            x.append([input[i], [0, 0, 0, 0, 0]])
-        input = np.asarray(x)
-
-        return input
-
     # Shuffle data
     def shuffle(input, output):
         # Shuffle data
@@ -213,11 +199,11 @@ class training:
     def model_x(input_x):
         model_x = keras.Sequential([
             keras.layers.Flatten(input_shape=(2, 6)),
-            keras.layers.Dense(20, activation="relu"),
-            keras.layers.Dense(40, activation="relu"),
-            keras.layers.Dense(20, activation="relu"),
-            keras.layers.Dense(14, activation="relu"),
-            keras.layers.Dense(7, activation="softmax"),
+            keras.layers.Dense(128, activation="relu"),
+            keras.layers.Dense(88, activation="relu"),
+            keras.layers.Dense(44, activation="relu"),
+            keras.layers.Dense(22, activation="relu"),
+            keras.layers.Dense(11, activation="softmax"),
         ])
 
         model_x.compile(optimizer="adam",
@@ -231,11 +217,11 @@ class training:
     def model_y(input_y):
         model_y = keras.Sequential([
             keras.layers.Flatten(input_shape=(2, 6)),
-            keras.layers.Dense(20, activation="relu"),
-            keras.layers.Dense(40, activation="relu"),
-            keras.layers.Dense(20, activation="relu"),
-            keras.layers.Dense(14, activation="relu"),
-            keras.layers.Dense(7, activation="softmax"),
+            keras.layers.Dense(128, activation="relu"),
+            keras.layers.Dense(88, activation="relu"),
+            keras.layers.Dense(44, activation="relu"),
+            keras.layers.Dense(22, activation="relu"),
+            keras.layers.Dense(11, activation="softmax"),
         ])
 
         model_y.compile(optimizer="adam",
@@ -254,6 +240,8 @@ class training:
             print("Fitting X-axis")
             model_x.fit(input_x, output_x, epochs=epochs, callbacks=[tensorboard])
 
+
+            tensorboard = TensorBoard(log_dir="logs\\{}".format(time()))
             print("Fitting Y-axis")
             model_y.fit(input_y, output_y, epochs=epochs, callbacks=[tensorboard])
 
@@ -300,8 +288,11 @@ class training:
         print("y-axis accurate:", round(1 - miss_y / len(input_y_test), 5))
         print("")
         print("Examples:")
+
         for i in range(5):
             num = random.randint(1, len(input_x_test)-1)
             print("Prediction:", np.argmax(x[num]), "Actual:", np.argmax(output_x_test[num]))
+
+
 
         return

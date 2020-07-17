@@ -106,11 +106,13 @@ class ai_record:
 
         # Recording x-axis
         left, straight, right = ai_record.x_position()
+        # print(left, straight, right)
         output_data_x.append([left, straight, right])
 
         # Recording y_axis
         gas, zero, brake = ai_record.y_position()
         output_data_y.append([gas, zero, brake])
+        # print(gas, zero, brake)
 
         # Saving data
         if save is True and len(input_data) % sample_rate == 0:
@@ -124,21 +126,22 @@ class ai_record:
 
     # Getting X-axis info (Turing keys)
     def x_position():
-
         # Prints the values for axis0-4
-        axis = float(pygame.joystick.Joystick(joynum).get_axis(0))
         left = 0
         straight = 0
         right = 0
-
-        if -0.008 < axis < 0.008:
+        if wheel:
+            axis = float(pygame.joystick.Joystick(joynum).get_axis(0))
+        else:
+            axis = float(pygame.joystick.Joystick(joynum).get_axis(4))
+        if -0.1 < axis < 0.1:
             straight = 1
-        elif axis < -0.008:
+        elif axis < -0.1:
             if axis < -0.99:
                 left = 1
             else:
                 left = abs(axis)
-        elif axis > 0.008:
+        elif axis > 0.1:
             if axis > 0.99:
                 right = 1
             else:
@@ -152,24 +155,29 @@ class ai_record:
     def y_position():
         # Values for axis0-4
         # Gas 1 to -1
-        y = float(pygame.joystick.Joystick(joynum).get_axis(1))
-
         brake = 0
         gas = 0
         zero = 0
-        if -0.005 < y < 0.005:
-            zero = 1
-        elif y < -0.005:
-            if y < -0.99:
+
+        axis = float(pygame.joystick.Joystick(joynum).get_axis(2))
+        axis = (1 - axis) / 2
+
+        if axis > 0.1:
+            if axis > 0.99:
                 gas = 1
             else:
-                gas = abs(y)
+                gas = axis
 
-        elif y > 0.005:
-            if y > 0.99:
+        axis = float(pygame.joystick.Joystick(joynum).get_axis(3))
+        axis = (1 - axis) / 2
+        if axis > 0.1:
+            if axis > 0.99:
                 brake = 1
             else:
-                brake = y
+                brake = axis
+
+        if gas == 0 and brake == 0:
+            zero = 1
 
         return gas, zero, brake
 
@@ -177,8 +185,9 @@ class ai_drive:
     # Driving with trained model
     def model_drive(self, model_x, model_y):
 
-        # Input shape change (NOT needed?)
-        # input = ai_drive.input_shape(self)
+        # Getting input
+        input = ai_drive.input_shape(self)
+
 
 
         # Prediction
@@ -191,22 +200,18 @@ class ai_drive:
 
     # Changing input data
     def input_shape(self):
-        x = self.x
-        slope = self.slope
-        v = self.v
-        b = self.brake
-        o_b = self.old_brake
+        x = self.x / (size_x*0.37383)
+        slope = self.slope / 20
+        v = self.v / 2
+        b = self.brake / 10
+        o_b = self.old_brake / 10
+        side = self.side / (size_x*0.0374)
+        line = self.line
 
-        # Inputs
         input = []
-        input.append([x, slope, b, o_b, v])
-
-        x = []
-        for i in range(len(input)):
-            x.append([input[i], [0, 0, 0, 0, 0]])
-
-        input = np.asarray(x)
-
+        input.append([[x, slope, b, o_b, side, v], line])
+        self.line = [x, slope, b, o_b, side, v]
+        input = np.asarray(input)
 
         return input
 
@@ -218,6 +223,8 @@ class ai_drive:
         left = np.sum(x[0:, :3])
         right = np.sum(x[0:, 4:])
         x = right - left
+        print(right)
+        print(left)
 
         # Y-axis
         y = model_y(input, training=False)
@@ -231,16 +238,15 @@ class ai_drive:
 
         return x, y
 
-
     # Updating controller
     def controller(x, y):
         # X-axis
-        x = 16400 + (8200 * x)
+        x = 16384 + (16384 * x)
         x = int(x)
         vjoy.data.wAxisX = 0x0 + x
 
         # Y-axis
-        y = 16400 + (8200 * y)
+        y = 16384 + (16384 * y)
         y = int(y)
         vjoy.data.wAxisY = 0x0 + y
 

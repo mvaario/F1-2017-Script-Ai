@@ -12,6 +12,8 @@ from drive import *
 from data_balance import *
 from getkeys import key_check
 import cv2
+import random
+
 
 class main:
     def __init__(self):
@@ -30,10 +32,8 @@ class main:
         # side lines
         self.side = 0
 
-
         # old line
-        self.line = [0,0,0,0,0,0]
-
+        self.line = [0, 0, 0, 0, 0, 0]
 
         return
 
@@ -65,6 +65,8 @@ class main:
         # Y-axis balance (len, shape)
         input_y, output_y, input_y_test, output_y_test = balance.y_axis(input, output_y)
 
+
+
         # Building X-axis model
         model_x = training.model_x(input)
 
@@ -88,8 +90,6 @@ class main:
                                input_x_test, output_x_test,
                                input_y_test, output_y_test
                                )
-
-
 
         return
 

@@ -14,22 +14,23 @@ win_name = "F1 Screen"
 dual_monitor = True
 width = 1920
 height = 1080
-running = False
+running = True
 
 wait_key = 1
 display = True
 display_fps = False
-FPS = 60
+FPS = 30
 joynum = 1
+wheel = True
 
 # AI settings
 ai = True
-record = True
-sample_rate = 200
+record = False
+sample_rate = 500
 save = False
-data_balance = True
-epochs = 10
-test_size = 100
+data_balance = False
+epochs = 100
+test_size = 1000
 
 # Screen position
 pos_x_min = int(width / 2 - 535)
@@ -44,7 +45,7 @@ size_y = int((pos_y_max - pos_y_min) * k)
 
 # Checks / fixes
 tensorflow_check = False
-browser = False
+browser = True
 
 class options:
     # Recording settings
@@ -103,21 +104,20 @@ class options:
 
     # Tensorflow-gpu prints
     def check():
-        if tensorflow_check:
-            print("Tensorflow version:", tf.__version__)
-            print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
-            tf.debugging.set_log_device_placement(True)
-            sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
+        print("Tensorflow version:", tf.__version__)
+        print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+        tf.debugging.set_log_device_placement(True)
+        sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
 
-            with tf.compat.v1.Session() as ses:
-                # Build a graph.
-                a = tf.constant(5.0)
-                b = tf.constant(6.0)
-                c = a * b
+        with tf.compat.v1.Session() as ses:
+            # Build a graph.
+            a = tf.constant(5.0)
+            b = tf.constant(6.0)
+            c = a * b
 
-                # Evaluate the tensor `c`.
-                print(ses.run(c))
+            # Evaluate the tensor `c`.
+            print(ses.run(c))
 
-            with tf.compat.v1.Session() as sess:
-                devices = sess.list_devices()
+        with tf.compat.v1.Session() as sess:
+            devices = sess.list_devices()
         return
